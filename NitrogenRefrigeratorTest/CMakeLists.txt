@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(ttt LANGUAGES CXX)
+project(NitrogenRefrigeratorTest LANGUAGES CXX)
 
 
 add_definitions(-DGTEST_LANGUAGE_CXX11)
@@ -37,8 +37,16 @@ endif ()
 
 include_directories(${GTestIncludes})
 
-add_executable(ttt main.cpp tst_ttt.h
-               ${GTestFiles})
-add_test(NAME ttt COMMAND ttt)
-target_link_libraries(ttt PRIVATE Threads::Threads)
+set(FILES_TO_TEST ../NitrogenRefrigerator/CellContainer/cellcontainer.h
+  ../NitrogenRefrigerator/CellContainer/cellcontainer.cpp)
+
+set(TEST_FILES CellContainerTest/cellContainerTest.h)
+
+add_executable(NitrogenRefrigeratorTest main.cpp tst_NitrogenRefrigeratorTest.h
+  ${TEST_FILES}
+  ${FILES_TO_TEST}
+  ${GTestFiles})
+
+add_test(NAME NitrogenRefrigeratorTest COMMAND NitrogenRefrigeratorTest)
+target_link_libraries(NitrogenRefrigeratorTest PRIVATE Threads::Threads)
 
