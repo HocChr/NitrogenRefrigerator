@@ -224,4 +224,89 @@ TEST(NitrogenRefrigeratorTest, GetDatasetByDate)
   EXPECT_EQ((dataSet[0].NumberOfCells + dataSet[1].NumberOfCells) == -8, true);
 }
 
+
+TEST(NitrogenRefrigeratorTest, GetDatasetByRemark)
+{
+  // arrange
+  CellContainer cellContainer;
+  Date date{2021, 5, 21, 15, 26};
+
+  Dataset dataSet1{
+    date,
+    12,
+    "Christian",
+    "Blablub"
+  };
+
+  Dataset dataSet2{
+    date,
+    -20,
+    "Sabine",
+    "Bliblub"
+  };
+
+  Dataset dataSet3{
+    Date{2021, 5, 21, 15, 27},
+    -8,
+    "Jule",
+    "Blablub"
+  };
+
+  cellContainer.addDataset(std::move(dataSet1));
+  cellContainer.addDataset(std::move(dataSet2));
+  cellContainer.addDataset(std::move(dataSet3));
+
+  // act
+  auto dataSet = cellContainer.getDatasetByRemark("Blablub");
+
+  // assert
+  EXPECT_EQ(dataSet.size(), 2);
+  EXPECT_EQ(dataSet[0].UserName == "Sabine", false);
+  EXPECT_EQ(dataSet[1].UserName == "Sabine", false);
+  EXPECT_EQ(dataSet[0].UserName == "Jule" || dataSet[0].UserName == "Christian", true);
+  EXPECT_EQ(dataSet[1].UserName == "Jule" || dataSet[1].UserName == "Christian", true);
+  EXPECT_EQ((dataSet[0].NumberOfCells + dataSet[1].NumberOfCells) == 4, true);
+}
+
+
+TEST(NitrogenRefrigeratorTest, GetDatasetByName)
+{
+  // arrange
+  CellContainer cellContainer;
+  Date date{2021, 5, 21, 15, 26};
+
+  Dataset dataSet1{
+    date,
+    12,
+    "Christian",
+    "Blablub"
+  };
+
+  Dataset dataSet2{
+    date,
+    -20,
+    "Sabine",
+    "Bliblub"
+  };
+
+  Dataset dataSet3{
+    Date{2021, 5, 21, 15, 27},
+    -8,
+    "Jule",
+    "Blablub"
+  };
+
+  cellContainer.addDataset(std::move(dataSet1));
+  cellContainer.addDataset(std::move(dataSet2));
+  cellContainer.addDataset(std::move(dataSet3));
+
+  // act
+  auto dataSet = cellContainer.getDatasetByUserName("Sabine");
+
+  // assert
+  EXPECT_EQ(dataSet.size(), 1);
+  EXPECT_EQ(dataSet[0].UserName == "Sabine", true);
+  EXPECT_EQ(dataSet[0].DateOfEntry == date, true);
+}
+
 #endif // CELLCONTAINERTEST_H
