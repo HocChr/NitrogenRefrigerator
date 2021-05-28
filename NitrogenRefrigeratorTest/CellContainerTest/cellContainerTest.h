@@ -125,7 +125,7 @@ TEST(NitrogenRefrigeratorTest, DatasetEqual)
 
 // - test Nitrogen Refrigerator -----------------------------------------------
 
-TEST(NitrogenRefrigeratorTest, NoDataSpecified)
+TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorNoDataSpecified)
 {
   // arrange
   NitrogenRefrigerator refrigerator(10, 10);
@@ -138,7 +138,7 @@ TEST(NitrogenRefrigeratorTest, NoDataSpecified)
   EXPECT_EQ(vial == vialDefault, true);
 }
 
-TEST(NitrogenRefrigeratorTest, OutOfRange)
+TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorOutOfRange)
 {
   // arrange
   NitrogenRefrigerator refrigerator(10, 10);
@@ -158,7 +158,7 @@ TEST(NitrogenRefrigeratorTest, OutOfRange)
   }, std::out_of_range );
 }
 
-TEST(NitrogenRefrigeratorTest, OutOfRangeNegative)
+TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorOutOfRangeNegative)
 {
   // arrange
   NitrogenRefrigerator refrigerator(10, 10);
@@ -178,7 +178,7 @@ TEST(NitrogenRefrigeratorTest, OutOfRangeNegative)
   }, std::out_of_range );
 }
 
-TEST(NitrogenRefrigeratorTest, AddData)
+TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorAddData)
 {
   // arrange
   NitrogenRefrigerator refrigerator(2, 3);
@@ -203,6 +203,69 @@ TEST(NitrogenRefrigeratorTest, AddData)
   EXPECT_EQ(refrigerator(1, 1) == dataSetDefault, true);
   EXPECT_EQ(refrigerator(0, 2) == dataSetDefault, true);
   EXPECT_EQ(refrigerator(1, 2) == dataSet1, true);
+}
+
+// - test Nitrogen Refrigerator Controller ------------------------------------
+
+class DataStorageTest : public IDataStorage
+{
+private:
+  std::vector<Vial> _vials;
+
+public:
+
+  DataStorageTest(std::vector<Vial>&& vials) : _vials(vials)
+  {}
+
+  std::vector<Vial> getStoredVials() const override
+  {
+    return _vials;
+  }
+
+  void saveVials(std::vector<Vial>) const override{};
+};
+
+TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorControllerDefaultNoExceptionThrown)
+{
+  // arrange
+  // arrange
+  Vial dataSet1{
+    Date{2021, 5, 21, 13, 53},
+    Date{2021, 5, 21, 13, 53},
+    12,
+    "Christian",
+    "Remark",
+    "HumanCells"
+  };
+
+  Vial dataSet2{
+    Date{2021, 5, 21, 13, 53},
+    Date{2021, 5, 21, 13, 53},
+    12,
+    "Christian",
+    "Remark",
+    "HumanCells"
+  };
+
+  Vial dataSet3{
+    Date{2021, 5, 21, 15, 26},
+    Date{2021, 5, 21, 15, 26},
+    20,
+    "Sabine",
+    "No Remark",
+    "CanineCells"
+  };
+
+  std::vector<Vial> vials {dataSet1, dataSet2, dataSet3};
+  std::unique_ptr<IDataStorage> storage = std::make_unique<DataStorageTest>(std::move(vials));
+
+  // act and assert
+  NitrogenRefrigeratorController controller(std::move(storage));
+
+  // todo
+
+  // assert
+  //EXPECT_EQ(refrigerator(0, 0) == dataSetDefault, true);
 }
 
 

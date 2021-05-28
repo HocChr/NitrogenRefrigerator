@@ -3,8 +3,11 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace NitrogenRefrigoratorKernel {
+
+// - defines a Datastructure that represents a date ---------------------------
 
 struct Date
 {
@@ -18,6 +21,8 @@ struct Date
   bool operator> (const Date  &date) const;
   bool operator== (const Date  &date) const;
 };
+
+// - defines the vial ---------------------------------------------------------
 
 class Vial final
 {
@@ -42,8 +47,9 @@ public:
        std::string cellType);
 };
 
-// this is the Nitrogen Refrigerator Class
-class NitrogenRefrigerator
+//- this is the Nitrogen Refrigerator Class -----------------------------------
+
+class NitrogenRefrigerator final
 {
   std::vector<Vial> inner_;
   unsigned int dimx_, dimy_;
@@ -56,7 +62,33 @@ public:
 
   // throws std::out_of_range whe out of range
   Vial& operator()(unsigned int x, unsigned int y);
+};
 
+//- this is the controller that manages the nitrogen refrigerator -------------
+
+// - this defines the interface for the data strorage -----
+
+class IDataStorage
+{
+public:
+  virtual std::vector<Vial> getStoredVials() const = 0;
+  virtual void saveVials(std::vector<Vial>) const = 0;
+};
+
+// - this defines the NitrogenRefrigeratorController itself
+
+class NitrogenRefrigeratorController final
+{
+
+public:
+
+  NitrogenRefrigeratorController(std::unique_ptr<IDataStorage> dataStorage);
+
+  // todo: implement the controller
+
+private:
+
+  std::unique_ptr<IDataStorage> _dataStorage;
 };
 
 } // namespace NitrogenRefrigoratorKernel

@@ -86,3 +86,12 @@ Vial& NitrogenRefrigerator::operator()(unsigned int x, unsigned int y)
     throw std::out_of_range("Matrix indices out of range"); // ouch
   return inner_[dimx_*y + x];
 }
+
+// Class NitrogenRefrigeratorController ----------------------------------------
+
+
+NitrogenRefrigeratorController::NitrogenRefrigeratorController(std::unique_ptr<IDataStorage> dataStorage):
+  _dataStorage(std::move(dataStorage))
+{
+  auto vials = _dataStorage->getStoredVials();
+}
