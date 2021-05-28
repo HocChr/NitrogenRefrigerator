@@ -92,7 +92,17 @@ Vial& NitrogenRefrigerator::operator()(unsigned int x, unsigned int y)
 
 bool NitrogenRefrigeratorController::check(const IDataStorage* dataStorage)
 {
-  return true;
+  bool success = true;
+  auto dimension = dataStorage->getRefrigeratorDimensions();
+
+
+  if(dimension.first * dimension.second != dataStorage->getStoredVials().size())
+  {
+    success = false;
+    _errors.push_back(NitrogenRefrigeratorErrorTypes::NUMBER_CELLS_DONT_EQUAL_DIMENSIONS);
+  }
+
+  return success;
 }
 
 NitrogenRefrigeratorController::NitrogenRefrigeratorController(std::unique_ptr<IDataStorage> dataStorage):
@@ -104,7 +114,8 @@ NitrogenRefrigeratorController::NitrogenRefrigeratorController(std::unique_ptr<I
           _dataStorage->getRefrigeratorDimensions().first,
           _dataStorage->getRefrigeratorDimensions().second);
   }
-  else{
+  else
+  {
     _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(0, 0);
   }
 }
