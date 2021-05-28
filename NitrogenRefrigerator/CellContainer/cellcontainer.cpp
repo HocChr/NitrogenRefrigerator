@@ -87,39 +87,28 @@ Vial& NitrogenRefrigerator::operator()(unsigned int x, unsigned int y)
   return inner_[dimx_*y + x];
 }
 
-// Class NitrogenRefrigeratorController ----------------------------------------
-
-
-bool NitrogenRefrigeratorController::check(const IDataStorage* dataStorage)
+void NitrogenRefrigerator::getDimensions(unsigned &dimX, unsigned &dimY) const
 {
-  bool success = true;
-
-  return success;
+  dimX = dimx_;
+  dimY = dimy_;
 }
+
+// Class NitrogenRefrigeratorController ----------------------------------------
 
 NitrogenRefrigeratorController::NitrogenRefrigeratorController(std::unique_ptr<IDataStorage> dataStorage):
   _dataStorage(std::move(dataStorage))
 {
-  //if(check(_dataStorage.get()))
-  //{
-  //  _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(
-  //        _dataStorage->getRefrigeratorDimensions().first,
-  //        _dataStorage->getRefrigeratorDimensions().second);
-  //}
-  //else
-  //{
-  //  _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(0, 0);
-  //}
+  if(_dataStorage != nullptr)
+  {
+    _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(_dataStorage->getStoredNitrogenRefrigerator());
+  }
+  else
+  {
+    _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(0, 0);
+  }
 }
 
-std::vector<NitrogenRefrigeratorErrorTypes> NitrogenRefrigeratorController::getErrors()
+const NitrogenRefrigerator &NitrogenRefrigeratorController::getNitrogenRefrigerator()
 {
-  return _errors;
-}
-
-std::vector<std::pair<int, int> > NitrogenRefrigeratorController::getCellsWithMultipleVials()
-{
-  std::vector<std::pair<int, int>> out;
-
-  return out;
+  return *_nitrogenRefrigerator;
 }

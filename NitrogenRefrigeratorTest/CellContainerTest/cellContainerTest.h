@@ -205,133 +205,72 @@ TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorAddData)
   EXPECT_EQ(refrigerator(1, 2) == dataSet1, true);
 }
 
+TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorGetDimensions)
+{
+  // arrange
+  NitrogenRefrigerator refrigerator(2, 3);
+  unsigned x, y;
+
+  // act
+  refrigerator.getDimensions(x, y);
+
+  // assert
+  EXPECT_EQ(x, 2);
+  EXPECT_EQ(y, 3);
+}
+
 // - test Nitrogen Refrigerator Controller ------------------------------------
 
-class DataStorageTest : public IDataStorage
+class DataStorageMock : public IDataStorage
 {
 private:
-  std::vector<Vial> _vials;
+  NitrogenRefrigerator _refrigerator;
   unsigned _dimX, _dimY;
 public:
 
-  DataStorageTest(unsigned dimX, unsigned dimY, std::vector<Vial>&& vials) : _dimX(dimX), _dimY(dimY), _vials(vials)
+  DataStorageMock(NitrogenRefrigerator&& refrigerator) :  _refrigerator(refrigerator)
   {}
 
-  std::vector<Vial> getStoredNitrogenRefrigerator() const override
+  NitrogenRefrigerator getStoredNitrogenRefrigerator() const override
   {
-    return _vials;
+    return _refrigerator;
   }
 
-  void storeNitrogenRefrigerator(std::vector<Vial>) const override{};
-
+  void storeNitrogenRefrigerator(const NitrogenRefrigerator&) const override{};
 };
 
-TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorController2x2)
+
+TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorControllerInitWithNullptr)
 {
   // arrange
-  // arrange
-  Vial dataSet1{
-    Date{2021, 5, 21, 13, 53},
-    Date{2021, 5, 21, 13, 53},
-    12,
-    "Christian",
-    "Remark",
-    "HumanCells"
-  };
-
-  Vial dataSet2{
-    Date{2021, 5, 21, 13, 53},
-    Date{2021, 5, 21, 13, 53},
-    12,
-    "Christian",
-    "Remark",
-    "HumanCells"
-  };
-
-  Vial dataSet3{
-    Date{2021, 5, 21, 15, 26},
-    Date{2021, 5, 21, 15, 26},
-    20,
-    "Sabine",
-    "No Remark",
-    "CanineCells"
-  };
-
-  Vial dataSet4{
-    Date{2021, 5, 21, 22, 45},
-    Date{2020, 5, 14, 10, 12},
-    20,
-    "Jule",
-    "I Like Cells",
-    "FishCells"
-  };
-
-  std::vector<Vial> vials {dataSet1, dataSet2, dataSet3, dataSet4};
-  std::unique_ptr<IDataStorage> storage = std::make_unique<DataStorageTest>(2, 2, std::move(vials));
+  NitrogenRefrigeratorController controller(nullptr);
+  unsigned x, y;
 
   // act
-  NitrogenRefrigeratorController controller(std::move(storage));
-  auto errors = controller.getErrors();
-  auto cellsWithMultipleVials = controller.getCellsWithMultipleVials();
+  const NitrogenRefrigerator& refrigerator = controller.getNitrogenRefrigerator();
+  refrigerator.getDimensions(x, y);
 
   // assert
-  EXPECT_EQ(errors.size(), 0);
-  EXPECT_EQ(cellsWithMultipleVials.size(), 0);
+  EXPECT_EQ(x, 0);
+  EXPECT_EQ(y, 0);
 }
 
-TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorController2x2DimensionSmallerNumberVials)
+
+TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorControllerInitValid)
 {
   // arrange
-  // arrange
-  Vial dataSet1{
-    Date{2021, 5, 21, 13, 53},
-    Date{2021, 5, 21, 13, 53},
-    12,
-    "Christian",
-    "Remark",
-    "HumanCells"
-  };
-
-  Vial dataSet2{
-    Date{2021, 5, 21, 13, 53},
-    Date{2021, 5, 21, 13, 53},
-    12,
-    "Christian",
-    "Remark",
-    "HumanCells"
-  };
-
-  Vial dataSet3{
-    Date{2021, 5, 21, 15, 26},
-    Date{2021, 5, 21, 15, 26},
-    20,
-    "Sabine",
-    "No Remark",
-    "CanineCells"
-  };
-
-  Vial dataSet4{
-    Date{2021, 5, 21, 22, 45},
-    Date{2020, 5, 14, 10, 12},
-    20,
-    "Jule",
-    "I Like Cells",
-    "FishCells"
-  };
-
-  std::vector<Vial> vials {dataSet1, dataSet2, dataSet3, dataSet4};
-  std::unique_ptr<IDataStorage> storage = std::make_unique<DataStorageTest>(1, 2, std::move(vials));
+  NitrogenRefrigerator r(2, 3);
+  std::unique_ptr<IDataStorage> storage = std::make_unique<DataStorageMock>(std::move(r));
+  NitrogenRefrigeratorController controller(std::move(storage));
+  unsigned x, y;
 
   // act
-  NitrogenRefrigeratorController controller(std::move(storage));
-  auto errors = controller.getErrors();
-  auto cellsWithMultipleVials = controller.getCellsWithMultipleVials();
+  const NitrogenRefrigerator& refrigerator = controller.getNitrogenRefrigerator();
+  refrigerator.getDimensions(x, y);
 
   // assert
-  EXPECT_EQ(errors.size(), 1);
-  EXPECT_EQ(errors.at(0), NitrogenRefrigeratorErrorTypes::NUMBER_CELLS_DONT_EQUAL_DIMENSIONS);
-  EXPECT_EQ(cellsWithMultipleVials.size(), 0);
+  EXPECT_EQ(x, 2);
+  EXPECT_EQ(y, 3);
 }
-
 
 #endif // CELLCONTAINERTEST_H
