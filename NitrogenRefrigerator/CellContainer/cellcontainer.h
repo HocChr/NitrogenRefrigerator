@@ -77,9 +77,8 @@ class IDataStorage
 {
 public:
   // returns x- and y- dimensions
-  virtual std::pair<unsigned int, unsigned int> getRefrigeratorDimensions() const = 0;
-  virtual std::vector<Vial> getStoredVials() const = 0;
-  virtual void saveVials(std::vector<Vial>) const = 0;
+  virtual std::vector<Vial> getStoredNitrogenRefrigerator() const = 0;
+  virtual void storeNitrogenRefrigerator(std::vector<Vial>) const = 0;
 };
 
 // - this defines the NitrogenRefrigeratorController itself

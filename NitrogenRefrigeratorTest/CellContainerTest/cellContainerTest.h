@@ -217,18 +217,13 @@ public:
   DataStorageTest(unsigned dimX, unsigned dimY, std::vector<Vial>&& vials) : _dimX(dimX), _dimY(dimY), _vials(vials)
   {}
 
-  std::vector<Vial> getStoredVials() const override
+  std::vector<Vial> getStoredNitrogenRefrigerator() const override
   {
     return _vials;
   }
 
-  void saveVials(std::vector<Vial>) const override{};
+  void storeNitrogenRefrigerator(std::vector<Vial>) const override{};
 
-  std::pair<unsigned int, unsigned int> getRefrigeratorDimensions() const override
-  {
-    std::pair<unsigned, unsigned> out(_dimX, _dimY);
-    return out;
-  };
 };
 
 TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorController2x2)

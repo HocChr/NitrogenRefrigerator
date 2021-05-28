@@ -93,14 +93,6 @@ Vial& NitrogenRefrigerator::operator()(unsigned int x, unsigned int y)
 bool NitrogenRefrigeratorController::check(const IDataStorage* dataStorage)
 {
   bool success = true;
-  auto dimension = dataStorage->getRefrigeratorDimensions();
-
-
-  if(dimension.first * dimension.second != dataStorage->getStoredVials().size())
-  {
-    success = false;
-    _errors.push_back(NitrogenRefrigeratorErrorTypes::NUMBER_CELLS_DONT_EQUAL_DIMENSIONS);
-  }
 
   return success;
 }
@@ -108,16 +100,16 @@ bool NitrogenRefrigeratorController::check(const IDataStorage* dataStorage)
 NitrogenRefrigeratorController::NitrogenRefrigeratorController(std::unique_ptr<IDataStorage> dataStorage):
   _dataStorage(std::move(dataStorage))
 {
-  if(check(_dataStorage.get()))
-  {
-    _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(
-          _dataStorage->getRefrigeratorDimensions().first,
-          _dataStorage->getRefrigeratorDimensions().second);
-  }
-  else
-  {
-    _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(0, 0);
-  }
+  //if(check(_dataStorage.get()))
+  //{
+  //  _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(
+  //        _dataStorage->getRefrigeratorDimensions().first,
+  //        _dataStorage->getRefrigeratorDimensions().second);
+  //}
+  //else
+  //{
+  //  _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(0, 0);
+  //}
 }
 
 std::vector<NitrogenRefrigeratorErrorTypes> NitrogenRefrigeratorController::getErrors()
