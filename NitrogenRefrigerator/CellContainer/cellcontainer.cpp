@@ -90,8 +90,33 @@ Vial& NitrogenRefrigerator::operator()(unsigned int x, unsigned int y)
 // Class NitrogenRefrigeratorController ----------------------------------------
 
 
+bool NitrogenRefrigeratorController::check(const IDataStorage* dataStorage)
+{
+  return true;
+}
+
 NitrogenRefrigeratorController::NitrogenRefrigeratorController(std::unique_ptr<IDataStorage> dataStorage):
   _dataStorage(std::move(dataStorage))
 {
-  auto vials = _dataStorage->getStoredVials();
+  if(check(_dataStorage.get()))
+  {
+    _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(
+          _dataStorage->getRefrigeratorDimensions().first,
+          _dataStorage->getRefrigeratorDimensions().second);
+  }
+  else{
+    _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(0, 0);
+  }
+}
+
+std::vector<NitrogenRefrigeratorErrorTypes> NitrogenRefrigeratorController::getErrors()
+{
+  return _errors;
+}
+
+std::vector<std::pair<int, int> > NitrogenRefrigeratorController::getCellsWithMultipleVials()
+{
+  std::vector<std::pair<int, int>> out;
+
+  return out;
 }

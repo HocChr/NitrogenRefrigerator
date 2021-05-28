@@ -211,10 +211,10 @@ class DataStorageTest : public IDataStorage
 {
 private:
   std::vector<Vial> _vials;
-
+  unsigned _dimX, _dimY;
 public:
 
-  DataStorageTest(std::vector<Vial>&& vials) : _vials(vials)
+  DataStorageTest(unsigned dimX, unsigned dimY, std::vector<Vial>&& vials) : _dimX(dimX), _dimY(dimY), _vials(vials)
   {}
 
   std::vector<Vial> getStoredVials() const override
@@ -223,9 +223,15 @@ public:
   }
 
   void saveVials(std::vector<Vial>) const override{};
+
+  std::pair<unsigned int, unsigned int> getRefrigeratorDimensions() const override
+  {
+    std::pair<unsigned, unsigned> out(_dimX, _dimY);
+    return out;
+  };
 };
 
-TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorControllerDefaultNoExceptionThrown)
+TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorController2x2)
 {
   // arrange
   // arrange
@@ -256,16 +262,80 @@ TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorControllerDefaultNoExceptionT
     "CanineCells"
   };
 
-  std::vector<Vial> vials {dataSet1, dataSet2, dataSet3};
-  std::unique_ptr<IDataStorage> storage = std::make_unique<DataStorageTest>(std::move(vials));
+  Vial dataSet4{
+    Date{2021, 5, 21, 22, 45},
+    Date{2020, 5, 14, 10, 12},
+    20,
+    "Jule",
+    "I Like Cells",
+    "FishCells"
+  };
 
-  // act and assert
+  std::vector<Vial> vials {dataSet1, dataSet2, dataSet3, dataSet4};
+  std::unique_ptr<IDataStorage> storage = std::make_unique<DataStorageTest>(2, 2, std::move(vials));
+
+  // act
   NitrogenRefrigeratorController controller(std::move(storage));
-
-  // todo
+  auto errors = controller.getErrors();
+  auto cellsWithMultipleVials = controller.getCellsWithMultipleVials();
 
   // assert
-  //EXPECT_EQ(refrigerator(0, 0) == dataSetDefault, true);
+  EXPECT_EQ(errors.size(), 0);
+  EXPECT_EQ(cellsWithMultipleVials.size(), 0);
+}
+
+TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorController2x2DimensionSmallerNumberVials)
+{
+  // arrange
+  // arrange
+  Vial dataSet1{
+    Date{2021, 5, 21, 13, 53},
+    Date{2021, 5, 21, 13, 53},
+    12,
+    "Christian",
+    "Remark",
+    "HumanCells"
+  };
+
+  Vial dataSet2{
+    Date{2021, 5, 21, 13, 53},
+    Date{2021, 5, 21, 13, 53},
+    12,
+    "Christian",
+    "Remark",
+    "HumanCells"
+  };
+
+  Vial dataSet3{
+    Date{2021, 5, 21, 15, 26},
+    Date{2021, 5, 21, 15, 26},
+    20,
+    "Sabine",
+    "No Remark",
+    "CanineCells"
+  };
+
+  Vial dataSet4{
+    Date{2021, 5, 21, 22, 45},
+    Date{2020, 5, 14, 10, 12},
+    20,
+    "Jule",
+    "I Like Cells",
+    "FishCells"
+  };
+
+  std::vector<Vial> vials {dataSet1, dataSet2, dataSet3, dataSet4};
+  std::unique_ptr<IDataStorage> storage = std::make_unique<DataStorageTest>(1, 2, std::move(vials));
+
+  // act
+  NitrogenRefrigeratorController controller(std::move(storage));
+  auto errors = controller.getErrors();
+  auto cellsWithMultipleVials = controller.getCellsWithMultipleVials();
+
+  // assert
+  EXPECT_EQ(errors.size(), 1);
+  EXPECT_EQ(errors.at(0), NitrogenRefrigeratorErrorTypes::NUMBER_CELLS_DONT_EQUAL_DIMENSIONS);
+  EXPECT_EQ(cellsWithMultipleVials.size(), 0);
 }
 
 

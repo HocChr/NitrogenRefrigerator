@@ -66,11 +66,18 @@ public:
 
 //- this is the controller that manages the nitrogen refrigerator -------------
 
-// - this defines the interface for the data strorage -----
+// - this defines the interface for the data storage ------
+
+enum class NitrogenRefrigeratorErrorTypes{
+  NUMBER_CELLS_DONT_EQUAL_DIMENSIONS,
+  CELL_HAS_MULTIPLE_VIALS
+};
 
 class IDataStorage
 {
 public:
+  // returns x- and y- dimensions
+  virtual std::pair<unsigned int, unsigned int> getRefrigeratorDimensions() const = 0;
   virtual std::vector<Vial> getStoredVials() const = 0;
   virtual void saveVials(std::vector<Vial>) const = 0;
 };
@@ -78,17 +85,23 @@ public:
 // - this defines the NitrogenRefrigeratorController itself
 
 class NitrogenRefrigeratorController final
-{
+{  
+private:
+
+  std::unique_ptr<IDataStorage> _dataStorage;
+  std::vector<NitrogenRefrigeratorErrorTypes> _errors;
+
+  std::unique_ptr<NitrogenRefrigerator> _nitrogenRefrigerator;
+
+  bool check(const IDataStorage* dataStorage);
 
 public:
 
   NitrogenRefrigeratorController(std::unique_ptr<IDataStorage> dataStorage);
 
-  // todo: implement the controller
+  std::vector<NitrogenRefrigeratorErrorTypes> getErrors();
 
-private:
-
-  std::unique_ptr<IDataStorage> _dataStorage;
+  std::vector<std::pair<int, int>> getCellsWithMultipleVials();
 };
 
 } // namespace NitrogenRefrigoratorKernel
