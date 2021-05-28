@@ -1,6 +1,7 @@
 #include "cellcontainer.h"
 
 #include <algorithm>
+#include <stdexcept>
 
 using namespace NitrogenRefrigoratorKernel;
 
@@ -43,64 +44,45 @@ bool Date::operator==(const Date &date) const
       Minute == date.Minute;
 }
 
+// struct Dataset -------------------------------------------------------------
+
+bool Vial::operator==(const Vial &date) const
+{
+  return (_dateOfEntry == date._dateOfEntry) &&
+      (_ageOfCells == date._ageOfCells) &&
+      (_numberOfCells == date._numberOfCells) &&
+      (_remark == date._remark) &&
+      (_userName == date._userName) &&
+      (_cellType == date._cellType);
+}
+
+Vial::Vial(Date dateOfEntry,
+           Date ageOfCells,
+           int numberOfCells,
+           std::string userName,
+           std::string remark,
+           std::string cellType):
+  _dateOfEntry{dateOfEntry},
+  _ageOfCells{ageOfCells},
+  _numberOfCells{numberOfCells},
+  _userName{userName},
+  _remark{remark},
+  _cellType{cellType}
+{
+
+}
+
 // Class CellContainer --------------------------------------------------------
 
-void CellContainer::addDataset(Dataset &&dataset)
+NitrogenRefrigerator::NitrogenRefrigerator(unsigned int dimx, unsigned int dimy)
+  : dimx_ (dimx), dimy_ (dimy)
 {
-  _dataSets.push_back(dataset);
+  inner_.resize (dimx_*dimy_);
 }
 
-bool CellContainer::deleteDataset(Dataset &&dataset)
+Vial& NitrogenRefrigerator::operator()(unsigned int x, unsigned int y)
 {
-  return false;
-}
-
-std::vector<Dataset> CellContainer::getDatasetByDate(const Date& date) const
-{
-  std::vector<Dataset> result;
-
-  std::copy_if(_dataSets.begin(), _dataSets.end(), std::back_inserter(result), [&](Dataset v) {
-      return v.DateOfEntry == date;
-  });
-
-  return result;
-}
-
-std::vector<Dataset> CellContainer::getDatasetByUserName(const std::string& userName) const
-{
-  std::vector<Dataset> result;
-
-  std::copy_if(_dataSets.begin(), _dataSets.end(), std::back_inserter(result), [&](Dataset v) {
-      return v.UserName == userName;
-  });
-
-  return result;
-}
-
-std::vector<Dataset> CellContainer::getDatasetByRemark(const std::string& remark) const
-{
-  std::vector<Dataset> result;
-
-  std::copy_if(_dataSets.begin(), _dataSets.end(), std::back_inserter(result), [&](Dataset v) {
-      return v.Remark == remark;
-  });
-
-  return result;
-}
-
-int CellContainer::getNumberOfDatasets() const
-{
-  return static_cast<int>(_dataSets.size());
-}
-
-int CellContainer::getNumberOfCells() const
-{
-  int numberOfCells = 0;
-
-  for(const auto& cell : _dataSets)
-  {
-    numberOfCells += cell.NumberOfCells;
-  }
-
-  return numberOfCells;
+  if (x >= dimx_ || y>= dimy_)
+    throw std::out_of_range("Matrix indices out of range"); // ouch
+  return inner_[dimx_*y + x];
 }

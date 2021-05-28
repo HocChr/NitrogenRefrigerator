@@ -19,40 +19,44 @@ struct Date
   bool operator== (const Date  &date) const;
 };
 
-struct Dataset
+class Vial final
 {
-  Date DateOfEntry;
-  int NumberOfCells = 0;
-  std::string UserName = "";
-  std::string Remark = "";
-};
-
-
-class CellContainer
-{
+  Date _dateOfEntry;
+  Date _ageOfCells;
+  int _numberOfCells = 0;
+  std::string _userName = "";
+  std::string _remark = "";
+  std::string _cellType = "";
 
 public:
 
-  void addDataset(Dataset&& dataset);
+  bool operator== (const Vial &dataSet) const;
 
-  // delets a Dataset by a given Date. When not found, it returns false, true otherwise.
-  bool deleteDataset(Dataset&& dataset);
+  Vial() = default;
 
-  // throws Exception when no corresponding Dataset was found
-  std::vector<Dataset> getDatasetByDate(const Date& date) const;
+  Vial(Date dateOfEntry,
+       Date ageOfCells,
+       int numberOfCells,
+       std::string userName,
+       std::string remark,
+       std::string cellType);
+};
 
-  // throws Exception when no corresponding Dataset was found
-  std::vector<Dataset> getDatasetByUserName(const std::string& userName) const;
+// this is the Nitrogen Refrigerator Class
+class NitrogenRefrigerator
+{
+  std::vector<Vial> inner_;
+  unsigned int dimx_, dimy_;
 
-  // throws Exception when no corresponding Dataset was found
-  std::vector<Dataset> getDatasetByRemark(const std::string& remark) const;
+public:
 
-  int getNumberOfDatasets() const;
+  NitrogenRefrigerator() = delete;
 
-  int getNumberOfCells() const;
+  NitrogenRefrigerator (unsigned int dimx, unsigned int dimy);
 
-private:
-  std::vector<Dataset> _dataSets;
+  // throws std::out_of_range whe out of range
+  Vial& operator()(unsigned int x, unsigned int y);
+
 };
 
 } // namespace NitrogenRefrigoratorKernel
