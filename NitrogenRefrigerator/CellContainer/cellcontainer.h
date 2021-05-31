@@ -11,9 +11,9 @@ namespace NitrogenRefrigoratorKernel {
 
 struct Date
 {
-  unsigned short Year = 0;
-  unsigned short Month = 0;
-  unsigned short Day = 0;
+  unsigned short Year = 1900;
+  unsigned short Month = 1;
+  unsigned short Day = 1;
   unsigned short Hour = 0;
   unsigned short Minute = 0;
 
@@ -22,6 +22,8 @@ struct Date
   bool operator== (const Date  &date) const;
 };
 
+// valid string format: yyyy-mm-ddThh:mm:ss
+// max year: 2999, min year: 1900
 std::string dateToString(Date date);
 Date dateFromString(std::string dateAsString);
 

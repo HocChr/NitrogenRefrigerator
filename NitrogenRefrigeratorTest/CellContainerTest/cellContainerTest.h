@@ -199,6 +199,46 @@ TEST(NitrogenRefrigeratorTest, DateFromStringCatchInvalidDelimiter3)
                }, std::runtime_error );
 }
 
+TEST(NitrogenRefrigeratorTest, DateFromStringInvalidYearSmall)
+{
+  // arrange
+  const std::string d = "1799-05-30T18:55:00";
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   const Date date = dateFromString(d);
+                 }
+                 catch( const std::runtime_error& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ( "dateFromString: invalid date format", e.what() );
+                   throw;
+                 }
+               }, std::runtime_error );
+}
+
+TEST(NitrogenRefrigeratorTest, DateFromStringInvalidYearHigh)
+{
+  // arrange
+  const std::string d = "3000-05-30T18:55:00";
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   const Date date = dateFromString(d);
+                 }
+                 catch( const std::runtime_error& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ( "dateFromString: invalid date format", e.what() );
+                   throw;
+                 }
+               }, std::runtime_error );
+}
+
 TEST(NitrogenRefrigeratorTest, DateToString)
 {
   // arrange

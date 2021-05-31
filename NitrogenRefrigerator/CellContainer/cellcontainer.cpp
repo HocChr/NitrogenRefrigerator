@@ -72,7 +72,7 @@ Date NitrogenRefrigoratorKernel::dateFromString(std::string dateAsString)
     {
       token = dateAsString.substr(0, pos);
       year = std::stoul(token);
-      if(year < 1900 || year > 3000){
+      if(year < 1900 || year >= 3000){
         throw std::runtime_error(std::string("dateFromString: invalid date format"));
       }
       dateAsString.erase(0, pos + delimiter.length());
@@ -116,7 +116,7 @@ Date NitrogenRefrigoratorKernel::dateFromString(std::string dateAsString)
     {
       token = dateAsString.substr(0, pos);
       hour = std::stoul(token);
-      if(hour < 1 || hour > 24){
+      if(hour < 0 || hour > 24){
         throw std::runtime_error(std::string("dateFromString: invalid date format"));
       }
       dateAsString.erase(0, pos + delimiter.length());
