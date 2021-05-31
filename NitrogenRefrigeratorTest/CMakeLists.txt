@@ -38,9 +38,12 @@ endif ()
 include_directories(${GTestIncludes})
 
 set(FILES_TO_TEST ../NitrogenRefrigerator/CellContainer/cellcontainer.h
-  ../NitrogenRefrigerator/CellContainer/cellcontainer.cpp)
+  ../NitrogenRefrigerator/CellContainer/cellcontainer.cpp
+  ../NitrogenRefrigerator/CellContainer/jsonStorage.h
+  ../NitrogenRefrigerator/CellContainer/jsonStorage.cpp)
 
 set(TEST_FILES CellContainerTest/cellContainerTest.h)
+set(TEST_FILES CellContainerTest/jsonStorageTest.h)
 
 add_executable(NitrogenRefrigeratorTest main.cpp tst_NitrogenRefrigeratorTest.h
   ${TEST_FILES}

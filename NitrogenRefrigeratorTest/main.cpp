@@ -1,5 +1,6 @@
 //#include "tst_NitrogenRefrigeratorTest.h"
 #include "CellContainerTest/cellContainerTest.h"
+#include "CellContainerTest/jsonStorageTest.h"
 
 #include <gtest/gtest.h>
 

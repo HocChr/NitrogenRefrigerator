@@ -44,7 +44,142 @@ bool Date::operator==(const Date &date) const
       Minute == date.Minute;
 }
 
+std::string NitrogenRefrigoratorKernel::dateToString(Date date)
+{
+  std::string out;
+
+  out += std::to_string(date.Year); out += "-";
+  out += std::to_string(date.Month ); out += "-";
+  out += std::to_string(date.Day   ); out += "T";
+  out += std::to_string(date.Hour  ); out += ":";
+  out += std::to_string(date.Minute); out += ":00";
+
+  return out;
+}
+
+Date NitrogenRefrigoratorKernel::dateFromString(std::string dateAsString)
+{
+  unsigned short year, month, day, hour, minute = 0;
+
+  std::string delimiter = "-";
+  size_t pos = 0;
+  std::string token;
+
+  try{
+
+    pos = dateAsString.find(delimiter);
+    if (pos != std::string::npos)
+    {
+      token = dateAsString.substr(0, pos);
+      year = std::stoul(token);
+      if(year < 1900 || year > 3000){
+        throw std::runtime_error(std::string("dateFromString: invalid date format"));
+      }
+      dateAsString.erase(0, pos + delimiter.length());
+    }
+    else{
+      throw std::runtime_error(std::string("dateFromString: invalid date format"));
+    }
+
+    pos = dateAsString.find(delimiter);
+    if (pos != std::string::npos)
+    {
+      token = dateAsString.substr(0, pos);
+      month = std::stoul(token);
+      if(month < 1 || month > 12){
+        throw std::runtime_error(std::string("dateFromString: invalid date format"));
+      }
+      dateAsString.erase(0, pos + delimiter.length());
+    }
+    else{
+      throw std::runtime_error(std::string("dateFromString: invalid date format"));
+    }
+
+    delimiter="T";
+    pos = dateAsString.find(delimiter);
+    if (pos != std::string::npos)
+    {
+      token = dateAsString.substr(0, pos);
+      day = std::stoul(token);
+      if(day < 1 || day > 31){
+        throw std::runtime_error(std::string("dateFromString: invalid date format"));
+      }
+      dateAsString.erase(0, pos + delimiter.length());
+    }
+    else{
+      throw std::runtime_error(std::string("dateFromString: invalid date format"));
+    }
+
+    delimiter=":";
+    pos = dateAsString.find(delimiter);
+    if (pos != std::string::npos)
+    {
+      token = dateAsString.substr(0, pos);
+      hour = std::stoul(token);
+      if(hour < 1 || hour > 24){
+        throw std::runtime_error(std::string("dateFromString: invalid date format"));
+      }
+      dateAsString.erase(0, pos + delimiter.length());
+    }
+    else{
+      throw std::runtime_error(std::string("dateFromString: invalid date format"));
+    }
+
+    pos = dateAsString.find(delimiter);
+    if (pos != std::string::npos)
+    {
+      token = dateAsString.substr(0, pos);
+      minute = std::stoul(token);
+      if(minute < 0 || minute > 59){
+        throw std::runtime_error(std::string("dateFromString: invalid date format"));
+      }
+      dateAsString.erase(0, pos + delimiter.length());
+    }
+    else{
+      throw std::runtime_error(std::string("dateFromString: invalid date format"));
+    }
+
+  }
+  catch(...)
+  {
+    throw std::runtime_error(std::string("dateFromString: invalid date format"));
+  }
+
+  Date date{year, month, day, hour, minute};
+  return date;
+}
+
 // struct Dataset -------------------------------------------------------------
+
+const Date &Vial::dateOfEntry() const
+{
+  return _dateOfEntry;
+}
+
+const Date &Vial::ageOfCells() const
+{
+  return _ageOfCells;
+}
+
+int Vial::numberOfCells() const
+{
+  return _numberOfCells;
+}
+
+const std::string &Vial::userName() const
+{
+  return _userName;
+}
+
+const std::string &Vial::remark() const
+{
+  return _remark;
+}
+
+const std::string &Vial::cellType() const
+{
+  return _cellType;
+}
 
 bool Vial::operator==(const Vial &date) const
 {
@@ -62,12 +197,12 @@ Vial::Vial(Date dateOfEntry,
            std::string userName,
            std::string remark,
            std::string cellType):
-  _dateOfEntry{dateOfEntry},
-  _ageOfCells{ageOfCells},
-  _numberOfCells{numberOfCells},
-  _userName{userName},
-  _remark{remark},
-  _cellType{cellType}
+  _dateOfEntry(dateOfEntry),
+  _ageOfCells(ageOfCells),
+  _numberOfCells(numberOfCells),
+  _userName(userName),
+  _remark(remark),
+  _cellType(cellType)
 {
 
 }

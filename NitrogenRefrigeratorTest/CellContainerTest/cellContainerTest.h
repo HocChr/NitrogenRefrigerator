@@ -83,6 +83,134 @@ TEST(NitrogenRefrigeratorTest, DateMinuteGreaterHourSmaller)
   EXPECT_EQ(date1 == date2, false);
 }
 
+TEST(NitrogenRefrigeratorTest, DateFromString)
+{
+  // arrange
+  const std::string d = "2021-05-30T18:55:00";
+
+  // act
+  const Date date = dateFromString(d);
+
+  // assert
+  EXPECT_EQ(date.Year, 2021);
+  EXPECT_EQ(date.Month, 5);
+  EXPECT_EQ(date.Day, 30);
+  EXPECT_EQ(date.Hour, 18);
+  EXPECT_EQ(date.Minute, 55);
+}
+
+TEST(NitrogenRefrigeratorTest, DateFromStringCatchInvalidYearFormat)
+{
+  // arrange
+  const std::string d = "21-05-30T18:55:00";
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   const Date date = dateFromString(d);
+                 }
+                 catch( const std::runtime_error& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ( "dateFromString: invalid date format", e.what() );
+                   throw;
+                 }
+               }, std::runtime_error );
+}
+
+TEST(NitrogenRefrigeratorTest, DateFromStringCatchInvalidYearFormat2)
+{
+  // arrange
+  const std::string d = "3021-05-30T18:55:00";
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   const Date date = dateFromString(d);
+                 }
+                 catch( const std::runtime_error& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ( "dateFromString: invalid date format", e.what() );
+                   throw;
+                 }
+               }, std::runtime_error );
+}
+
+TEST(NitrogenRefrigeratorTest, DateFromStringCatchInvalidDelimiter)
+{
+  // arrange
+  const std::string d = "2021-05:30T18:55:00";
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   const Date date = dateFromString(d);
+                 }
+                 catch( const std::runtime_error& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ( "dateFromString: invalid date format", e.what() );
+                   throw;
+                 }
+               }, std::runtime_error );
+}
+
+TEST(NitrogenRefrigeratorTest, DateFromStringCatchInvalidDelimiter2)
+{
+  // arrange
+  const std::string d = "2021-05-30T18:55";
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   const Date date = dateFromString(d);
+                 }
+                 catch( const std::runtime_error& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ( "dateFromString: invalid date format", e.what() );
+                   throw;
+                 }
+               }, std::runtime_error );
+}
+
+TEST(NitrogenRefrigeratorTest, DateFromStringCatchInvalidDelimiter3)
+{
+  // arrange
+  const std::string d = "2021-05-30T18::55:00";
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   const Date date = dateFromString(d);
+                 }
+                 catch( const std::runtime_error& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ( "dateFromString: invalid date format", e.what() );
+                   throw;
+                 }
+               }, std::runtime_error );
+}
+
+TEST(NitrogenRefrigeratorTest, DateToString)
+{
+  // arrange
+  Date date{2021, 5, 30, 18, 55};
+
+  // act
+  std::string d = dateToString(date);
+
+  // assert
+  EXPECT_EQ(d == "2021-5-30T18:55:00", true);
+}
+
 // test struct Dataset --------------------------------------------------------
 
 TEST(NitrogenRefrigeratorTest, DatasetEqual)

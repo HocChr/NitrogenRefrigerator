@@ -22,6 +22,9 @@ struct Date
   bool operator== (const Date  &date) const;
 };
 
+std::string dateToString(Date date);
+Date dateFromString(std::string dateAsString);
+
 // - defines the vial ---------------------------------------------------------
 
 class Vial final
@@ -45,6 +48,13 @@ public:
        std::string userName,
        std::string remark,
        std::string cellType);
+
+  const Date &dateOfEntry() const;
+  const Date &ageOfCells() const;
+  int numberOfCells() const;
+  const std::string &userName() const;
+  const std::string &remark() const;
+  const std::string &cellType() const;
 };
 
 //- this is the Nitrogen Refrigerator Class -----------------------------------
