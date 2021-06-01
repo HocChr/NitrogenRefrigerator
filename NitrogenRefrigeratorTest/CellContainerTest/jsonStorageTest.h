@@ -13,12 +13,12 @@ TEST(NitrogenRefrigeratorTest, JsonStorageCreateAndSafeDefaultData)
   // arrange
   JsonStorage storage;
   unsigned dimX, dimY;
-  Vial defaultVial;
+  NitrogenRefrigoratorKernel::NitrogenRefrigerator defaultRefrigerator(64, 64);
 
   // act
-  storage.createAndSafeDefaultData("default64x64.json", 64, 64);
-  NitrogenRefrigerator defaultRefrigerator = storage.getStoredNitrogenRefrigerator("default64x64.json");
-  defaultRefrigerator.getDimensions(dimX, dimY);
+  storage.storeNitrogenRefrigerator("default64x64.json", defaultRefrigerator);
+  NitrogenRefrigerator storedRefrigerator = storage.getStoredNitrogenRefrigerator("default64x64.json");
+  storedRefrigerator.getDimensions(dimX, dimY);
 
   // assert
   EXPECT_EQ(dimX, 64);
@@ -27,7 +27,7 @@ TEST(NitrogenRefrigeratorTest, JsonStorageCreateAndSafeDefaultData)
   {
     for(unsigned j = 0; j < 64; ++j)
     {
-      EXPECT_EQ(defaultRefrigerator(i, j) == defaultVial, true);
+      EXPECT_EQ(storedRefrigerator(i, j) == defaultRefrigerator(i, j), true);
     }
   }
 }

@@ -404,7 +404,7 @@ public:
     return _refrigerator;
   }
 
-  void storeNitrogenRefrigerator(const NitrogenRefrigerator&) const override{};
+  void storeNitrogenRefrigerator(NitrogenRefrigerator&) const override{};
 };
 
 

@@ -87,7 +87,7 @@ class IDataStorage
 public:
   // returns x- and y- dimensions
   virtual NitrogenRefrigerator getStoredNitrogenRefrigerator() const = 0;
-  virtual void storeNitrogenRefrigerator(const NitrogenRefrigerator&) const = 0;
+  virtual void storeNitrogenRefrigerator(NitrogenRefrigerator&) const = 0;
 };
 
 // - this defines the NitrogenRefrigeratorController itself

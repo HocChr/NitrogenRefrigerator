@@ -7,10 +7,19 @@
 using namespace NitrogenRefrigoratorKernel;
 using json = nlohmann::json;
 
+
+NitrogenRefrigerator JsonStorage::getStoredNitrogenRefrigerator() const
+{
+  return getStoredNitrogenRefrigerator(_storageFile);
+}
+
+void JsonStorage::storeNitrogenRefrigerator(NitrogenRefrigoratorKernel::NitrogenRefrigerator &r) const
+{
+  storeNitrogenRefrigerator(_storageFile, r);
+}
+
 NitrogenRefrigerator JsonStorage::getStoredNitrogenRefrigerator(const std::string &filepath) const
 {
-  NitrogenRefrigerator refrigerator(0, 0);
-
   std::ifstream i(filepath);
   json j;
 
@@ -23,51 +32,69 @@ NitrogenRefrigerator JsonStorage::getStoredNitrogenRefrigerator(const std::strin
     throw std::runtime_error(std::string("getStoredNitrogenRefrigerator: no valid json Format"));
   }
 
-  try {
-    Date dateOfEntry = dateFromString(j["dateOfEntry"]);
-    Date ageOfCells = dateFromString(j["ageOfCells"]);
-    int numberOfCells = j["numberOfCells"];
-    std::string userName = j["userName"];
-    std::string remark = j["remark"];
-    std::string celltype = j["cellType"];
+  try
+  {
 
-    Vial vial(dateOfEntry, ageOfCells, numberOfCells, userName, remark, celltype);
+    unsigned dimensionX = j["dimensionX"];
+    unsigned dimensionY = j["dimensionY"];
+    int dataSize = j["data"].size();
+
+    if(dataSize != dimensionX * dimensionY)
+    {
+      throw std::runtime_error(std::string("getStoredNitrogenRefrigerator: dimension mismatch"));
+    }
+
+    NitrogenRefrigerator refrigerator(dimensionX, dimensionY);
+
+    for(const auto& item : j["data"])
+    {
+      Date dateOfEntry = dateFromString(item["dateOfEntry"]);
+      Date ageOfCells = dateFromString(item["ageOfCells"]);
+      int numberOfCells = item["numberOfCells"];
+      std::string userName = item["userName"];
+      std::string remark = item["remark"];
+      std::string celltype = item["cellType"];
+      unsigned posX = item["positionX"];
+      unsigned posY = item["positionY"];
+
+      Vial vial(dateOfEntry, ageOfCells, numberOfCells, userName, remark, celltype);
+      refrigerator(posX, posY) = vial;
+    }
+
+    return refrigerator;
   }
   catch (std::runtime_error& e)
   {
     throw std::runtime_error(std::string("getStoredNitrogenRefrigerator: no valid Vial data"));
   }
-
-  return refrigerator;
+  return NitrogenRefrigerator(0, 0);
 }
 
-NitrogenRefrigerator JsonStorage::getStoredNitrogenRefrigerator() const
-{
-  NitrogenRefrigerator refrigerator(0, 0);
-
-  return refrigerator;
-}
-
-void JsonStorage::createAndSafeDefaultData(const std::string &filepath, unsigned dimensionX, unsigned dimensionY) const
-{
-  Vial defaultVial;
-
+void JsonStorage::storeNitrogenRefrigerator(const std::string &filepath,
+                                            NitrogenRefrigoratorKernel::NitrogenRefrigerator& refrigerator) const
+{  
   json j;
-  j["dimensionX"] = dimensionX;
-  j["dimensionY"] = dimensionY;
+  unsigned dimX, dimY = 0;
+
+  refrigerator.getDimensions(dimX, dimY);
+  j["dimensionX"] = dimX;
+  j["dimensionY"] = dimY;
 
   auto jsonObjects = json::array();
-  for(unsigned i = 0; i < dimensionX; ++i)
+  for(unsigned i = 0; i < dimX; ++i)
   {
-    for(unsigned j = 0; j < dimensionY; ++j)
+    for(unsigned j = 0; j < dimY; ++j)
     {
       jsonObjects.push_back({
-                              dateToString(defaultVial.dateOfEntry()),
-                              dateToString(defaultVial.ageOfCells()),
-                              defaultVial.numberOfCells(),
-                              defaultVial.userName(),
-                              defaultVial.remark(),
-                              defaultVial.cellType()});
+                              { "positionX", i },
+                              { "positionY", j },
+                              { "dateOfEntry", dateToString(refrigerator(i, j).dateOfEntry()) },
+                              { "ageOfCells", dateToString(refrigerator(i, j).ageOfCells()) },
+                              { "numberOfCells", refrigerator(i, j).numberOfCells() },
+                              { "userName", refrigerator(i, j).userName() },
+                              { "remark", refrigerator(i, j).remark() },
+                              { "cellType", refrigerator(i, j).cellType() }
+                            });
     }
   }
 
