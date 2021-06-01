@@ -291,12 +291,12 @@ TEST(NitrogenRefrigeratorTest, DatasetEqual)
   EXPECT_EQ(dataSet3 == dataSet2, false);
 }
 
-// - test Nitrogen Refrigerator -----------------------------------------------
+// - test Casette -------------------------------------------------------------
 
-TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorNoDataSpecified)
+TEST(NitrogenRefrigeratorTest, CasetteNoDataSpecified)
 {
   // arrange
-  NitrogenRefrigerator refrigerator(10, 10);
+  Casette refrigerator(10, 10);
   Vial vial, vialDefault;
 
   // act
@@ -306,10 +306,10 @@ TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorNoDataSpecified)
   EXPECT_EQ(vial == vialDefault, true);
 }
 
-TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorOutOfRange)
+TEST(NitrogenRefrigeratorTest, CasetteOutOfRange)
 {
   // arrange
-  NitrogenRefrigerator refrigerator(10, 10);
+  Casette refrigerator(10, 10);
 
   // act and assert
   EXPECT_THROW({
@@ -326,10 +326,10 @@ TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorOutOfRange)
   }, std::out_of_range );
 }
 
-TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorOutOfRangeNegative)
+TEST(NitrogenRefrigeratorTest, CasetteOutOfRangeNegative)
 {
   // arrange
-  NitrogenRefrigerator refrigerator(10, 10);
+  Casette refrigerator(10, 10);
 
   // act and assert
   EXPECT_THROW({
@@ -346,10 +346,10 @@ TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorOutOfRangeNegative)
   }, std::out_of_range );
 }
 
-TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorAddData)
+TEST(NitrogenRefrigeratorTest, CasetteAddData)
 {
   // arrange
-  NitrogenRefrigerator refrigerator(2, 3);
+  Casette refrigerator(2, 3);
   Vial dataSet1{
     Date{2021, 5, 21, 13, 53},
     Date{2021, 5, 20, 12, 33},
@@ -373,10 +373,10 @@ TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorAddData)
   EXPECT_EQ(refrigerator(1, 2) == dataSet1, true);
 }
 
-TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorGetDimensions)
+TEST(NitrogenRefrigeratorTest, CasetteGetDimensions)
 {
   // arrange
-  NitrogenRefrigerator refrigerator(2, 3);
+  Casette refrigerator(2, 3);
   unsigned x, y;
 
   // act
@@ -392,19 +392,19 @@ TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorGetDimensions)
 class DataStorageMock : public IDataStorage
 {
 private:
-  NitrogenRefrigerator _refrigerator;
+  Casette _refrigerator;
   unsigned _dimX, _dimY;
 public:
 
-  DataStorageMock(NitrogenRefrigerator&& refrigerator) :  _refrigerator(refrigerator)
+  DataStorageMock(Casette&& refrigerator) :  _refrigerator(refrigerator)
   {}
 
-  NitrogenRefrigerator getStoredNitrogenRefrigerator() const override
+  Casette getStoredNitrogenRefrigerator() const override
   {
     return _refrigerator;
   }
 
-  void storeNitrogenRefrigerator(NitrogenRefrigerator&) const override{};
+  void storeNitrogenRefrigerator(Casette&) const override{};
 };
 
 
@@ -415,7 +415,7 @@ TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorControllerInitWithNullptr)
   unsigned x, y;
 
   // act
-  const NitrogenRefrigerator& refrigerator = controller.getNitrogenRefrigerator();
+  const Casette& refrigerator = controller.getNitrogenRefrigerator();
   refrigerator.getDimensions(x, y);
 
   // assert
@@ -427,13 +427,13 @@ TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorControllerInitWithNullptr)
 TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorControllerInitValid)
 {
   // arrange
-  NitrogenRefrigerator r(2, 3);
+  Casette r(2, 3);
   std::unique_ptr<IDataStorage> storage = std::make_unique<DataStorageMock>(std::move(r));
   NitrogenRefrigeratorController controller(std::move(storage));
   unsigned x, y;
 
   // act
-  const NitrogenRefrigerator& refrigerator = controller.getNitrogenRefrigerator();
+  const Casette& refrigerator = controller.getNitrogenRefrigerator();
   refrigerator.getDimensions(x, y);
 
   // assert

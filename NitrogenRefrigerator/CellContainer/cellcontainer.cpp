@@ -209,20 +209,20 @@ Vial::Vial(Date dateOfEntry,
 
 // Class CellContainer --------------------------------------------------------
 
-NitrogenRefrigerator::NitrogenRefrigerator(unsigned int dimx, unsigned int dimy)
+Casette::Casette(unsigned int dimx, unsigned int dimy)
   : dimx_ (dimx), dimy_ (dimy)
 {
   inner_.resize (dimx_*dimy_);
 }
 
-Vial& NitrogenRefrigerator::operator()(unsigned int x, unsigned int y)
+Vial& Casette::operator()(unsigned int x, unsigned int y)
 {
   if (x >= dimx_ || y>= dimy_)
     throw std::out_of_range("Matrix indices out of range"); // ouch
   return inner_[dimx_*y + x];
 }
 
-void NitrogenRefrigerator::getDimensions(unsigned &dimX, unsigned &dimY) const
+void Casette::getDimensions(unsigned &dimX, unsigned &dimY) const
 {
   dimX = dimx_;
   dimY = dimy_;
@@ -235,15 +235,15 @@ NitrogenRefrigeratorController::NitrogenRefrigeratorController(std::unique_ptr<I
 {
   if(_dataStorage != nullptr)
   {
-    _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(_dataStorage->getStoredNitrogenRefrigerator());
+    _nitrogenRefrigerator = std::make_unique<Casette>(_dataStorage->getStoredNitrogenRefrigerator());
   }
   else
   {
-    _nitrogenRefrigerator = std::make_unique<NitrogenRefrigerator>(0, 0);
+    _nitrogenRefrigerator = std::make_unique<Casette>(0, 0);
   }
 }
 
-const NitrogenRefrigerator &NitrogenRefrigeratorController::getNitrogenRefrigerator()
+const Casette &NitrogenRefrigeratorController::getNitrogenRefrigerator()
 {
   return *_nitrogenRefrigerator;
 }

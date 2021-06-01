@@ -13,11 +13,11 @@ TEST(NitrogenRefrigeratorTest, JsonStorageCreateAndSafeDefaultData)
   // arrange
   JsonStorage storage;
   unsigned dimX, dimY;
-  NitrogenRefrigoratorKernel::NitrogenRefrigerator defaultRefrigerator(64, 64);
+  NitrogenRefrigoratorKernel::Casette defaultRefrigerator(64, 64);
 
   // act
   storage.storeNitrogenRefrigerator("default64x64.json", defaultRefrigerator);
-  NitrogenRefrigerator storedRefrigerator = storage.getStoredNitrogenRefrigerator("default64x64.json");
+  Casette storedRefrigerator = storage.getStoredNitrogenRefrigerator("default64x64.json");
   storedRefrigerator.getDimensions(dimX, dimY);
 
   // assert

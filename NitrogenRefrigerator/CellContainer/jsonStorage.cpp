@@ -8,17 +8,17 @@ using namespace NitrogenRefrigoratorKernel;
 using json = nlohmann::json;
 
 
-NitrogenRefrigerator JsonStorage::getStoredNitrogenRefrigerator() const
+Casette JsonStorage::getStoredNitrogenRefrigerator() const
 {
   return getStoredNitrogenRefrigerator(_storageFile);
 }
 
-void JsonStorage::storeNitrogenRefrigerator(NitrogenRefrigoratorKernel::NitrogenRefrigerator &r) const
+void JsonStorage::storeNitrogenRefrigerator(NitrogenRefrigoratorKernel::Casette &r) const
 {
   storeNitrogenRefrigerator(_storageFile, r);
 }
 
-NitrogenRefrigerator JsonStorage::getStoredNitrogenRefrigerator(const std::string &filepath) const
+Casette JsonStorage::getStoredNitrogenRefrigerator(const std::string &filepath) const
 {
   std::ifstream i(filepath);
   json j;
@@ -44,7 +44,7 @@ NitrogenRefrigerator JsonStorage::getStoredNitrogenRefrigerator(const std::strin
       throw std::runtime_error(std::string("getStoredNitrogenRefrigerator: dimension mismatch"));
     }
 
-    NitrogenRefrigerator refrigerator(dimensionX, dimensionY);
+    Casette refrigerator(dimensionX, dimensionY);
 
     for(const auto& item : j["data"])
     {
@@ -67,11 +67,11 @@ NitrogenRefrigerator JsonStorage::getStoredNitrogenRefrigerator(const std::strin
   {
     throw std::runtime_error(std::string("getStoredNitrogenRefrigerator: no valid Vial data"));
   }
-  return NitrogenRefrigerator(0, 0);
+  return Casette(0, 0);
 }
 
 void JsonStorage::storeNitrogenRefrigerator(const std::string &filepath,
-                                            NitrogenRefrigoratorKernel::NitrogenRefrigerator& refrigerator) const
+                                            NitrogenRefrigoratorKernel::Casette& refrigerator) const
 {  
   json j;
   unsigned dimX, dimY = 0;

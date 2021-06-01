@@ -61,16 +61,16 @@ public:
 
 //- this is the Nitrogen Refrigerator Class -----------------------------------
 
-class NitrogenRefrigerator final
+class Casette final
 {
   std::vector<Vial> inner_;
   unsigned int dimx_, dimy_;
 
 public:
 
-  NitrogenRefrigerator() = delete;
+  Casette() = delete;
 
-  NitrogenRefrigerator (unsigned int dimx, unsigned int dimy);
+  Casette (unsigned int dimx, unsigned int dimy);
 
   // throws std::out_of_range whe out of range
   Vial& operator()(unsigned int x, unsigned int y);
@@ -86,8 +86,8 @@ class IDataStorage
 {
 public:
   // returns x- and y- dimensions
-  virtual NitrogenRefrigerator getStoredNitrogenRefrigerator() const = 0;
-  virtual void storeNitrogenRefrigerator(NitrogenRefrigerator&) const = 0;
+  virtual Casette getStoredNitrogenRefrigerator() const = 0;
+  virtual void storeNitrogenRefrigerator(Casette&) const = 0;
 };
 
 // - this defines the NitrogenRefrigeratorController itself
@@ -97,13 +97,13 @@ class NitrogenRefrigeratorController final
 private:
 
   std::unique_ptr<IDataStorage> _dataStorage;
-  std::unique_ptr<NitrogenRefrigerator> _nitrogenRefrigerator;
+  std::unique_ptr<Casette> _nitrogenRefrigerator;
 
 public:
 
   NitrogenRefrigeratorController(std::unique_ptr<IDataStorage> dataStorage);
 
-  const NitrogenRefrigerator& getNitrogenRefrigerator();
+  const Casette& getNitrogenRefrigerator();
 };
 
 } // namespace NitrogenRefrigoratorKernel
