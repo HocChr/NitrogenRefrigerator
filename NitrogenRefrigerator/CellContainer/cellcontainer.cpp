@@ -230,20 +230,33 @@ void Casette::getDimensions(unsigned &dimX, unsigned &dimY) const
 
 // Class NitrogenRefrigeratorController ----------------------------------------
 
-NitrogenRefrigeratorController::NitrogenRefrigeratorController(std::unique_ptr<IDataStorage> dataStorage):
-  _dataStorage(std::move(dataStorage))
+void CasetteStack::insertCasettes(std::vector<std::unique_ptr<Casette>>&& casettes)
 {
-  if(_dataStorage != nullptr)
-  {
-    _nitrogenRefrigerator = std::make_unique<Casette>(_dataStorage->getStoredNitrogenRefrigerator());
-  }
-  else
-  {
-    _nitrogenRefrigerator = std::make_unique<Casette>(0, 0);
-  }
+  _casetteStack = std::move(casettes); // move the casettes
 }
 
-const Casette &NitrogenRefrigeratorController::getNitrogenRefrigerator()
+unsigned CasetteStack::size() const
 {
-  return *_nitrogenRefrigerator;
+  return _casetteStack.size();
+}
+
+void CasetteStack::insertCasette(std::unique_ptr<Casette> casette, unsigned index)
+{
+  if(index > _casetteStack.size())
+    throw std::out_of_range("insertCasette: index out of range");
+  _casetteStack.insert(_casetteStack.begin() + index, std::move(casette));
+}
+
+void CasetteStack::removeCasette(unsigned index)
+{
+  if(index >= _casetteStack.size())
+    throw std::out_of_range("removeCasette: index out of range");
+  _casetteStack.erase(_casetteStack.begin() + index);
+}
+
+const Casette* CasetteStack::getCasette(unsigned index) const
+{
+  if(index >= _casetteStack.size())
+    throw std::out_of_range("getCasette: index out of range"); // ouch
+  return _casetteStack.at(index).get();
 }

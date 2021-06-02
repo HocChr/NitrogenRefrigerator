@@ -387,7 +387,7 @@ TEST(NitrogenRefrigeratorTest, CasetteGetDimensions)
   EXPECT_EQ(y, 3);
 }
 
-// - test Nitrogen Refrigerator Controller ------------------------------------
+// - test CasetteStack --------------------------------------------------------
 
 class DataStorageMock : public IDataStorage
 {
@@ -408,37 +408,342 @@ public:
 };
 
 
-TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorControllerInitWithNullptr)
+TEST(NitrogenRefrigeratorTest, CasetteStackInitWithNullptr)
 {
   // arrange
-  NitrogenRefrigeratorController controller(nullptr);
-  unsigned x, y;
-
-  // act
-  const Casette& refrigerator = controller.getNitrogenRefrigerator();
-  refrigerator.getDimensions(x, y);
+  CasetteStack casetteStack;
 
   // assert
-  EXPECT_EQ(x, 0);
-  EXPECT_EQ(y, 0);
+  EXPECT_EQ(casetteStack.size(), 0);
 }
 
 
-TEST(NitrogenRefrigeratorTest, NitrogenRefrigeratorControllerInitValid)
+TEST(NitrogenRefrigeratorTest, CasetteStackInitValid)
 {
   // arrange
-  Casette r(2, 3);
-  std::unique_ptr<IDataStorage> storage = std::make_unique<DataStorageMock>(std::move(r));
-  NitrogenRefrigeratorController controller(std::move(storage));
+  CasetteStack casetteStack;
+  casetteStack.insertCasette(std::make_unique<Casette>(2, 3), 0);
   unsigned x, y;
 
   // act
-  const Casette& refrigerator = controller.getNitrogenRefrigerator();
-  refrigerator.getDimensions(x, y);
+  const Casette* casette = casetteStack.getCasette(0);
+  casette->getDimensions(x, y);
 
   // assert
+  EXPECT_EQ(casetteStack.size(), 1);
   EXPECT_EQ(x, 2);
   EXPECT_EQ(y, 3);
+}
+
+TEST(NitrogenRefrigeratorTest, CasetteStackInsertCasettes)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+
+  CasetteStack casetteStack;
+
+  unsigned dimX0, dimX1, dimX2, dimY0, dimY1, dimY2 = 0;
+
+  // act
+  casetteStack.insertCasettes(std::move(casettes));
+
+  // assert
+  casetteStack.getCasette(0)->getDimensions(dimX0, dimY0);
+  casetteStack.getCasette(1)->getDimensions(dimX1, dimY1);
+  casetteStack.getCasette(2)->getDimensions(dimX2, dimY2);
+
+  EXPECT_EQ(casetteStack.size(), 3);
+  EXPECT_EQ(dimX0, 2);
+  EXPECT_EQ(dimY0, 3);
+  EXPECT_EQ(dimX1, 3);
+  EXPECT_EQ(dimY1, 3);
+  EXPECT_EQ(dimX2, 6);
+  EXPECT_EQ(dimY2, 7);
+}
+
+TEST(NitrogenRefrigeratorTest, CasetteStackInsertCasette)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+
+  CasetteStack casetteStack;
+  casetteStack.insertCasettes(std::move(casettes));
+
+  unsigned dimX0, dimX1, dimX2, dimY0, dimY1, dimY2, dimX3, dimY3 = 0;
+
+  // act
+  casetteStack.insertCasette(std::make_unique<Casette>(1, 1), 1);
+
+  // assert
+  casetteStack.getCasette(0)->getDimensions(dimX0, dimY0);
+  casetteStack.getCasette(1)->getDimensions(dimX3, dimY3);
+  casetteStack.getCasette(2)->getDimensions(dimX1, dimY1);
+  casetteStack.getCasette(3)->getDimensions(dimX2, dimY2);
+
+  EXPECT_EQ(casetteStack.size(), 4);
+  EXPECT_EQ(dimX0, 2);
+  EXPECT_EQ(dimY0, 3);
+  EXPECT_EQ(dimX3, 1);
+  EXPECT_EQ(dimY3, 1);
+  EXPECT_EQ(dimX1, 3);
+  EXPECT_EQ(dimY1, 3);
+  EXPECT_EQ(dimX2, 6);
+  EXPECT_EQ(dimY2, 7);
+}
+
+
+TEST(NitrogenRefrigeratorTest, CasetteStackInsertCasetteIndexOutOfRange)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+
+  CasetteStack casetteStack;
+  casetteStack.insertCasettes(std::move(casettes));
+
+  unsigned dimX0, dimX1, dimX2, dimY0, dimY1, dimY2 = 0;
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   casetteStack.insertCasette(std::make_unique<Casette>(1, 1), 12);
+                 }
+                 catch( const std::out_of_range& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ("insertCasette: index out of range", e.what() );
+                   throw;
+                 }
+               }, std::out_of_range );
+
+
+  // assert
+  casetteStack.getCasette(0)->getDimensions(dimX0, dimY0);
+  casetteStack.getCasette(1)->getDimensions(dimX1, dimY1);
+  casetteStack.getCasette(2)->getDimensions(dimX2, dimY2);
+
+  EXPECT_EQ(casetteStack.size(), 3);
+  EXPECT_EQ(dimX0, 2);
+  EXPECT_EQ(dimY0, 3);
+  EXPECT_EQ(dimX1, 3);
+  EXPECT_EQ(dimY1, 3);
+  EXPECT_EQ(dimX2, 6);
+  EXPECT_EQ(dimY2, 7);
+}
+
+
+TEST(NitrogenRefrigeratorTest, CasetteStackInsertSomeNullptr)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(1, 1));
+  casettes.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack;
+  casetteStack.insertCasettes(std::move(casettes));
+
+  unsigned dimX, dimY=  0;
+
+  // act
+  casetteStack.insertCasette(std::make_unique<Casette>(6, 7), 2);
+  casetteStack.insertCasette(nullptr, 5);
+
+  // assert
+  EXPECT_EQ(casetteStack.size(), 7);
+
+  casetteStack.getCasette(0)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 2);
+  EXPECT_EQ(dimY, 3);
+
+  casetteStack.getCasette(1)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 3);
+  EXPECT_EQ(dimY, 3);
+
+  casetteStack.getCasette(2)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 6);
+  EXPECT_EQ(dimY, 7);
+
+  EXPECT_EQ(casetteStack.getCasette(3) == nullptr, true);
+
+  casetteStack.getCasette(4)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 1);
+  EXPECT_EQ(dimY, 1);
+
+  EXPECT_EQ(casetteStack.getCasette(5) == nullptr, true);
+
+  casetteStack.getCasette(6)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 2);
+  EXPECT_EQ(dimY, 1);
+}
+
+
+TEST(NitrogenRefrigeratorTest, CasetteStackRemoveCasettesIndexOutOfRange)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(1, 1));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack;
+  casetteStack.insertCasettes(std::move(casettes));
+
+  unsigned dimX, dimY=  0;
+
+  // act
+  casetteStack.removeCasette(6);
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   casetteStack.removeCasette(6);
+                 }
+                 catch( const std::out_of_range& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ("removeCasette: index out of range", e.what() );
+                   throw;
+                 }
+               }, std::out_of_range );
+
+  // assert
+  EXPECT_EQ(casetteStack.size(), 6);
+
+  casetteStack.getCasette(0)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 2);
+  EXPECT_EQ(dimY, 3);
+
+  casetteStack.getCasette(1)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 3);
+  EXPECT_EQ(dimY, 3);
+
+  casetteStack.getCasette(2)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 6);
+  EXPECT_EQ(dimY, 7);
+
+  EXPECT_EQ(casetteStack.getCasette(3) == nullptr, true);
+
+  casetteStack.getCasette(4)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 1);
+  EXPECT_EQ(dimY, 1);
+}
+
+TEST(NitrogenRefrigeratorTest, CasetteStackRemoveCasettes)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(1, 1));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack;
+  casetteStack.insertCasettes(std::move(casettes));
+
+  unsigned dimX, dimY=  0;
+
+  // act
+  casetteStack.removeCasette(4);
+  casetteStack.removeCasette(4);
+
+  // assert
+  EXPECT_EQ(casetteStack.size(), 5);
+
+  casetteStack.getCasette(0)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 2);
+  EXPECT_EQ(dimY, 3);
+
+  casetteStack.getCasette(1)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 3);
+  EXPECT_EQ(dimY, 3);
+
+  casetteStack.getCasette(2)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 6);
+  EXPECT_EQ(dimY, 7);
+
+  EXPECT_EQ(casetteStack.getCasette(3) == nullptr, true);
+
+  casetteStack.getCasette(4)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 2);
+  EXPECT_EQ(dimY, 1);
+}
+
+TEST(NitrogenRefrigeratorTest, CasetteStackGetCasetteIndexOutOfRange)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(1, 1));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack;
+  casetteStack.insertCasettes(std::move(casettes));
+
+  unsigned dimX, dimY=  0;
+
+  // act
+  casetteStack.removeCasette(4);
+  casetteStack.removeCasette(4);
+
+  // assert
+  EXPECT_EQ(casetteStack.size(), 5);
+
+  casetteStack.getCasette(0)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 2);
+  EXPECT_EQ(dimY, 3);
+
+  casetteStack.getCasette(1)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 3);
+  EXPECT_EQ(dimY, 3);
+
+  casetteStack.getCasette(2)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 6);
+  EXPECT_EQ(dimY, 7);
+
+  EXPECT_EQ(casetteStack.getCasette(3) == nullptr, true);
+
+  casetteStack.getCasette(4)->getDimensions(dimX, dimY);
+  EXPECT_EQ(dimX, 2);
+  EXPECT_EQ(dimY, 1);
+
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   casetteStack.getCasette(6);
+                 }
+                 catch( const std::out_of_range& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ("getCasette: index out of range", e.what() );
+                   throw;
+                 }
+               }, std::out_of_range );
 }
 
 #endif // CELLCONTAINERTEST_H

@@ -92,18 +92,30 @@ public:
 
 // - this defines the NitrogenRefrigeratorController itself
 
-class NitrogenRefrigeratorController final
+class CasetteStack final
 {  
 private:
 
   std::unique_ptr<IDataStorage> _dataStorage;
-  std::unique_ptr<Casette> _nitrogenRefrigerator;
+  std::vector<std::unique_ptr<Casette>> _casetteStack;
 
 public:
 
-  NitrogenRefrigeratorController(std::unique_ptr<IDataStorage> dataStorage);
+  //CasetteStack(std::unique_ptr<IDataStorage> dataStorage);
 
-  const Casette& getNitrogenRefrigerator();
+  unsigned size() const;
+
+  void insertCasettes(std::vector<std::unique_ptr<Casette>>&& casettes);
+
+  // throws std::out_of_range when index > stack size
+  // the index numeration starts with 0
+  void insertCasette(std::unique_ptr<Casette> casette, unsigned index);
+
+  // throws std::out_of_range when index >= stack size
+  void removeCasette(unsigned index);
+
+  // throws std::out_of_range when index >= stack size
+  const Casette* getCasette(unsigned index) const;
 };
 
 } // namespace NitrogenRefrigoratorKernel
