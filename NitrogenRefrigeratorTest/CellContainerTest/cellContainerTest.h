@@ -386,6 +386,38 @@ TEST(NitrogenRefrigeratorTest, CasetteGetDimensions)
   EXPECT_EQ(y, 3);
 }
 
+TEST(NitrogenRefrigeratorTest, CasetteGetOperatorEquals)
+{
+  // arrange
+  Casette refrigerator(2, 3);
+  Casette refrigerator2(2, 3);
+
+  // act & assert
+  EXPECT_EQ(refrigerator == refrigerator2, true);
+}
+
+TEST(NitrogenRefrigeratorTest, CasetteGetOperatorEqualsNotEqual)
+{
+  // arrange
+  Casette refrigerator(2, 3);
+  Casette refrigerator2(3, 2);
+
+  // act & assert
+  EXPECT_EQ(refrigerator == refrigerator2, false);
+}
+
+TEST(NitrogenRefrigeratorTest, CasetteGetOperatorEqualsNotEqualOfValue)
+{
+  // arrange
+  Casette refrigerator(2, 3);
+  Casette refrigerator2(3, 2);
+
+  refrigerator.add(1, 1, std::make_unique<Vial>());
+
+  // act & assert
+  EXPECT_EQ(refrigerator == refrigerator2, false);
+}
+
 // - test CasetteStack --------------------------------------------------------
 
 
@@ -726,6 +758,68 @@ TEST(NitrogenRefrigeratorTest, CasetteStackGetCasetteIndexOutOfRange)
                    throw;
                  }
                }, std::out_of_range );
+}
+
+TEST(NitrogenRefrigeratorTest, CasetteStackOperatorEquals)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(1, 1));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack;
+  casetteStack.insertCasettes(std::move(casettes));
+
+  std::vector<std::unique_ptr<Casette>> casettes2;
+  casettes2.push_back(std::make_unique<Casette>(2, 3));
+  casettes2.push_back(std::make_unique<Casette>(3, 3));
+  casettes2.push_back(std::make_unique<Casette>(6, 7));
+  casettes2.push_back(nullptr);
+  casettes2.push_back(std::make_unique<Casette>(1, 1));
+  casettes2.push_back(nullptr);
+  casettes2.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack2;
+  casetteStack2.insertCasettes(std::move(casettes2));
+
+
+  // act & assert
+  EXPECT_EQ(casetteStack == casetteStack2, true);
+}
+
+TEST(NitrogenRefrigeratorTest, CasetteStackOperatorEqualsNotEqual)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(1, 1));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack;
+  casetteStack.insertCasettes(std::move(casettes));
+
+  std::vector<std::unique_ptr<Casette>> casettes2;
+  casettes2.push_back(std::make_unique<Casette>(2, 3));
+  casettes2.push_back(std::make_unique<Casette>(3, 3));
+  casettes2.push_back(nullptr);
+  casettes2.push_back(std::make_unique<Casette>(1, 1));
+  casettes2.push_back(nullptr);
+  casettes2.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack2;
+  casetteStack2.insertCasettes(std::move(casettes2));
+
+  // act & assert
+  EXPECT_EQ(casetteStack == casetteStack2, false);
 }
 
 

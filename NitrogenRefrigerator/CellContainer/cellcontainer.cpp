@@ -217,18 +217,34 @@ Casette::Casette(unsigned int dimx, unsigned int dimy)
 
 bool Casette::operator==(const Casette &other) const
 {
-  bool ok = equal(begin(inner_), end(inner_),
-                  begin(other.inner_), end(other.inner_),
-                  []
-                  (const std::unique_ptr<Vial>& lhs, const std::unique_ptr<Vial>& rhs)
+  if(dimx_ != other.dimx_ || dimy_ != other.dimy_){
+    return false;
+  }
+
+  for(unsigned i = 0; i < dimx_; ++i)
   {
-    if(lhs == nullptr && rhs == nullptr)
-      return true;
-    else if (lhs == nullptr || rhs == nullptr)
-      return false;
-    return *lhs.get() == *rhs.get();
-  });
-  return ok;
+    for(unsigned j = 0; j < dimy_; ++j)
+    {
+      auto * thisVial = this->operator()(i, j);
+      auto * otherVial = other.operator()(i, j);
+
+      if( thisVial == nullptr || otherVial == nullptr)
+      {
+        if(!(thisVial == otherVial))
+        {
+          return false;
+        }
+        continue;
+      }
+
+      if (!(*thisVial == *otherVial))
+      {
+        return false;
+      }
+    }
+  }
+
+  return true;
 }
 
 const Vial* const Casette::operator()(unsigned int x, unsigned int y) const
