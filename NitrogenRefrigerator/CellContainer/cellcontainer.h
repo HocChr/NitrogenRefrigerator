@@ -63,7 +63,7 @@ public:
 
 class Casette final
 {
-  std::vector<Vial> inner_;
+  std::vector<std::unique_ptr<Vial>> inner_;
   unsigned int dimx_, dimy_;
 
 public:
@@ -74,9 +74,11 @@ public:
 
   bool operator==(const Casette& other) const;
 
+  // throws std::out_of_range when out of range
+  const Vial* const operator()(unsigned int x, unsigned int y) const;
 
-  // throws std::out_of_range whe out of range
-  Vial& operator()(unsigned int x, unsigned int y);
+  // throws std::out_of_range when out of range
+  void add(unsigned int x, unsigned int y, std::unique_ptr<Vial> vial);
 
   void getDimensions(unsigned& dimX, unsigned& dimY) const;
 };

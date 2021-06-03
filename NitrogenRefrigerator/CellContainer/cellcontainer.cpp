@@ -217,14 +217,32 @@ Casette::Casette(unsigned int dimx, unsigned int dimy)
 
 bool Casette::operator==(const Casette &other) const
 {
-  return inner_ == other.inner_;
+  bool ok = equal(begin(inner_), end(inner_),
+                  begin(other.inner_), end(other.inner_),
+                  []
+                  (const std::unique_ptr<Vial>& lhs, const std::unique_ptr<Vial>& rhs)
+  {
+    if(lhs == nullptr && rhs == nullptr)
+      return true;
+    else if (lhs == nullptr || rhs == nullptr)
+      return false;
+    return *lhs.get() == *rhs.get();
+  });
+  return ok;
 }
 
-Vial& Casette::operator()(unsigned int x, unsigned int y)
+const Vial* const Casette::operator()(unsigned int x, unsigned int y) const
 {
   if (x >= dimx_ || y>= dimy_)
     throw std::out_of_range("Matrix indices out of range"); // ouch
-  return inner_[dimx_*y + x];
+  return inner_[dimx_*y + x].get();
+}
+
+void Casette::add(unsigned int x, unsigned int y, std::unique_ptr<Vial> vial)
+{
+  if (x >= dimx_ || y>= dimy_)
+    throw std::out_of_range("Matrix indices out of range"); // ouch
+  inner_[dimx_*y + x] = std::move(vial);
 }
 
 void Casette::getDimensions(unsigned &dimX, unsigned &dimY) const

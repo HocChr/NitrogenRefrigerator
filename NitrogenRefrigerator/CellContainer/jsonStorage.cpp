@@ -50,17 +50,23 @@ CasetteStack JsonStorage::getStoredNitrogenRefrigerator(const std::string &filep
       Casette c(dimX, dimY);
       for(const auto &item : casette)
       {
+        unsigned posX = item["positionX"];
+        unsigned posY = item["positionY"];
+        if (item["isNull"] == true)
+        {
+          c.add(posX, posY, nullptr);
+          continue;
+        }
+
         Date dateOfEntry = dateFromString(item["dateOfEntry"]);
         Date ageOfCells = dateFromString(item["ageOfCells"]);
         int numberOfCells = item["numberOfCells"];
         std::string userName = item["userName"];
         std::string remark = item["remark"];
         std::string celltype = item["cellType"];
-        unsigned posX = item["positionX"];
-        unsigned posY = item["positionY"];
 
-        Vial vial(dateOfEntry, ageOfCells, numberOfCells, userName, remark, celltype);
-        c(posX, posY) = vial;
+        auto vial = std::make_unique<Vial>(dateOfEntry, ageOfCells, numberOfCells, userName, remark, celltype);
+        c.add(posX, posY, std::move(vial));
       }
       casetteStack.pushBack(std::make_unique<Casette>(std::move(c)));
     }
@@ -98,15 +104,25 @@ void JsonStorage::storeNitrogenRefrigerator(const std::string &filepath,
     {
       for(unsigned j = 0; j < dimY; ++j)
       {
+        if(casette(i, j) == nullptr)
+        {
+          casetteJsonObjects.push_back({
+                                  { "positionX", i },
+                                  { "positionY", j },
+                                  { "isNull" , true }
+                                });
+          continue;
+        }
         casetteJsonObjects.push_back({
                                 { "positionX", i },
                                 { "positionY", j },
-                                { "dateOfEntry", dateToString(casette(i, j).dateOfEntry()) },
-                                { "ageOfCells", dateToString(casette(i, j).ageOfCells()) },
-                                { "numberOfCells", casette(i, j).numberOfCells() },
-                                { "userName", casette(i, j).userName() },
-                                { "remark", casette(i, j).remark() },
-                                { "cellType", casette(i, j).cellType() }
+                                { "isNull" , false },
+                                { "dateOfEntry", dateToString(casette(i, j)->dateOfEntry()) },
+                                { "ageOfCells", dateToString(casette(i, j)->ageOfCells()) },
+                                { "numberOfCells", casette(i, j)->numberOfCells() },
+                                { "userName", casette(i, j)->userName() },
+                                { "remark", casette(i, j)->remark() },
+                                { "cellType", casette(i, j)->cellType() }
                               });
       }
     }

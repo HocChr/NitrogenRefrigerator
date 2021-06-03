@@ -297,13 +297,13 @@ TEST(NitrogenRefrigeratorTest, CasetteNoDataSpecified)
 {
   // arrange
   Casette refrigerator(10, 10);
-  Vial vial, vialDefault;
+  const Vial* vial;
 
   // act
   vial = refrigerator(5, 5);
 
   // assert
-  EXPECT_EQ(vial == vialDefault, true);
+  EXPECT_EQ(vial == nullptr, true);
 }
 
 TEST(NitrogenRefrigeratorTest, CasetteOutOfRange)
@@ -358,19 +358,18 @@ TEST(NitrogenRefrigeratorTest, CasetteAddData)
     "Remark",
     "HumanCells"
   };
-  Vial dataSetDefault;
 
   // act
-  refrigerator(0, 1) = dataSet1;
-  refrigerator(1, 2) = dataSet1;
+  refrigerator.add(0, 1, std::make_unique<Vial>(dataSet1));
+  refrigerator.add(1, 2, std::make_unique<Vial>(dataSet1));
 
   // assert
-  EXPECT_EQ(refrigerator(0, 0) == dataSetDefault, true);
-  EXPECT_EQ(refrigerator(1, 0) == dataSetDefault, true);
-  EXPECT_EQ(refrigerator(0, 1) == dataSet1, true);
-  EXPECT_EQ(refrigerator(1, 1) == dataSetDefault, true);
-  EXPECT_EQ(refrigerator(0, 2) == dataSetDefault, true);
-  EXPECT_EQ(refrigerator(1, 2) == dataSet1, true);
+  EXPECT_EQ(refrigerator(0, 0) == nullptr, true);
+  EXPECT_EQ(refrigerator(1, 0) == nullptr, true);
+  EXPECT_EQ(*refrigerator(0, 1) == dataSet1, true);
+  EXPECT_EQ(refrigerator(1, 1) == nullptr, true);
+  EXPECT_EQ(refrigerator(0, 2) == nullptr, true);
+  EXPECT_EQ(*refrigerator(1, 2) == dataSet1, true);
 }
 
 TEST(NitrogenRefrigeratorTest, CasetteGetDimensions)
