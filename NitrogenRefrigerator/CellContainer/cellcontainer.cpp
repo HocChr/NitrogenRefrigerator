@@ -215,6 +215,11 @@ Casette::Casette(unsigned int dimx, unsigned int dimy)
   inner_.resize (dimx_*dimy_);
 }
 
+bool Casette::operator==(const Casette &other) const
+{
+  return inner_ == other.inner_;
+}
+
 Vial& Casette::operator()(unsigned int x, unsigned int y)
 {
   if (x >= dimx_ || y>= dimy_)
@@ -235,9 +240,20 @@ void CasetteStack::insertCasettes(std::vector<std::unique_ptr<Casette>>&& casett
   _casetteStack = std::move(casettes); // move the casettes
 }
 
-bool CasetteStack::operator==(const CasetteStack &other)
+bool CasetteStack::operator==(const CasetteStack &other) const
 {
-  return _casetteStack == other._casetteStack;
+  bool ok = equal(begin(_casetteStack), end(_casetteStack),
+                  begin(other._casetteStack), end(other._casetteStack),
+                  []
+                  (const std::unique_ptr<Casette>& lhs, const std::unique_ptr<Casette>& rhs)
+  {
+    if(lhs == nullptr && rhs == nullptr)
+      return true;
+    else if (lhs == nullptr || rhs == nullptr)
+      return false;
+    return *lhs.get() == *rhs.get();
+  });
+  return ok;
 }
 
 unsigned CasetteStack::size() const
@@ -250,6 +266,11 @@ void CasetteStack::insertCasette(std::unique_ptr<Casette> casette, unsigned inde
   if(index > _casetteStack.size())
     throw std::out_of_range("insertCasette: index out of range");
   _casetteStack.insert(_casetteStack.begin() + index, std::move(casette));
+}
+
+void CasetteStack::pushBack(std::unique_ptr<Casette> casette)
+{
+  _casetteStack.push_back(std::move(casette));
 }
 
 void CasetteStack::removeCasette(unsigned index)

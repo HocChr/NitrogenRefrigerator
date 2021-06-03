@@ -72,6 +72,9 @@ public:
 
   Casette (unsigned int dimx, unsigned int dimy);
 
+  bool operator==(const Casette& other) const;
+
+
   // throws std::out_of_range whe out of range
   Vial& operator()(unsigned int x, unsigned int y);
 
@@ -91,7 +94,7 @@ private:
 
 public:
 
-  bool operator==(const CasetteStack& other);
+  bool operator==(const CasetteStack& other) const;
 
   unsigned size() const;
 
@@ -100,6 +103,8 @@ public:
   // throws std::out_of_range when index > stack size
   // the index numeration starts with 0
   void insertCasette(std::unique_ptr<Casette> casette, unsigned index);
+
+  void pushBack(std::unique_ptr<Casette> casette);
 
   // throws std::out_of_range when index >= stack size
   void removeCasette(unsigned index);

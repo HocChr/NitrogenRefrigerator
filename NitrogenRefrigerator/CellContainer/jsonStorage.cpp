@@ -20,53 +20,56 @@ void JsonStorage::storeNitrogenRefrigerator(NitrogenRefrigoratorKernel::CasetteS
 
 CasetteStack JsonStorage::getStoredNitrogenRefrigerator(const std::string &filepath) const
 {
-  //std::ifstream i(filepath);
-  //json j;
-  //
-  //try
-  //{
-  //  j = json::parse(i);
-  //}
-  //catch (json::parse_error& ex)
-  //{
-  //  throw std::runtime_error(std::string("getStoredNitrogenRefrigerator: no valid json Format"));
-  //}
-  //
-  //try
-  //{
-  //
-  //  unsigned dimensionX = j["dimensionX"];
-  //  unsigned dimensionY = j["dimensionY"];
-  //  int dataSize = j["data"].size();
-  //
-  //  if(dataSize != dimensionX * dimensionY)
-  //  {
-  //    throw std::runtime_error(std::string("getStoredNitrogenRefrigerator: dimension mismatch"));
-  //  }
-  //
-  //  CasetteStack refrigerator;
-  //
-  //  for(const auto& item : j["data"])
-  //  {
-  //    Date dateOfEntry = dateFromString(item["dateOfEntry"]);
-  //    Date ageOfCells = dateFromString(item["ageOfCells"]);
-  //    int numberOfCells = item["numberOfCells"];
-  //    std::string userName = item["userName"];
-  //    std::string remark = item["remark"];
-  //    std::string celltype = item["cellType"];
-  //    unsigned posX = item["positionX"];
-  //    unsigned posY = item["positionY"];
-  //
-  //    Vial vial(dateOfEntry, ageOfCells, numberOfCells, userName, remark, celltype);
-  //    refrigerator(posX, posY) = vial;
-  //  }
-  //
-  //  return refrigerator;
-  //}
-  //catch (std::runtime_error& e)
-  //{
-  //  throw std::runtime_error(std::string("getStoredNitrogenRefrigerator: no valid Vial data"));
-  //}
+  std::ifstream i(filepath);
+  json j;
+
+  try
+  {
+    j = json::parse(i);
+  }
+  catch (json::parse_error& ex)
+  {
+    throw std::runtime_error(std::string("getStoredNitrogenRefrigerator: no valid json Format"));
+  }
+
+  try
+  {
+    CasetteStack casetteStack;
+    for(const auto& stackItem : j["data"])
+    {
+      unsigned dimX = stackItem[0];
+      unsigned dimY = stackItem[1];
+
+      auto& casette = stackItem[2];
+      if (casette == nullptr)
+      {
+        casetteStack.pushBack(nullptr);
+        continue;
+      }
+
+      Casette c(dimX, dimY);
+      for(const auto &item : casette)
+      {
+        Date dateOfEntry = dateFromString(item["dateOfEntry"]);
+        Date ageOfCells = dateFromString(item["ageOfCells"]);
+        int numberOfCells = item["numberOfCells"];
+        std::string userName = item["userName"];
+        std::string remark = item["remark"];
+        std::string celltype = item["cellType"];
+        unsigned posX = item["positionX"];
+        unsigned posY = item["positionY"];
+
+        Vial vial(dateOfEntry, ageOfCells, numberOfCells, userName, remark, celltype);
+        c(posX, posY) = vial;
+      }
+      casetteStack.pushBack(std::make_unique<Casette>(std::move(c)));
+    }
+    return casetteStack;
+  }
+  catch (std::runtime_error& e)
+  {
+    throw std::runtime_error(std::string("getStoredNitrogenRefrigerator: no valid Vial data"));
+  }
   return CasetteStack();
 }
 
@@ -82,7 +85,7 @@ void JsonStorage::storeNitrogenRefrigerator(const std::string &filepath,
   {
     if(refrigerator.getCasette(c) == nullptr)
     {
-      casetteStackJsonObjects.push_back( { nullptr, 0, 0 } );
+      casetteStackJsonObjects.push_back( { 0, 0, nullptr } );
       continue;
     }
 
@@ -107,8 +110,7 @@ void JsonStorage::storeNitrogenRefrigerator(const std::string &filepath,
                               });
       }
     }
-
-    casetteStackJsonObjects.push_back( { casetteJsonObjects, dimX, dimY } );
+    casetteStackJsonObjects.push_back( { dimX, dimY, casetteJsonObjects });
   }
 
   j["data"] = casetteStackJsonObjects;
