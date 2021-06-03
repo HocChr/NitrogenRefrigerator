@@ -13,23 +13,21 @@ TEST(NitrogenRefrigeratorTest, JsonStorageCreateAndSafeDefaultData)
   // arrange
   JsonStorage storage;
   unsigned dimX, dimY;
-  NitrogenRefrigoratorKernel::Casette defaultRefrigerator(64, 64);
+  NitrogenRefrigoratorKernel::CasetteStack defaultRefrigerator;
+
+  defaultRefrigerator.insertCasette(std::make_unique<Casette>(3, 3), 0);
+  defaultRefrigerator.insertCasette(std::make_unique<Casette>(1, 3), 1);
+  defaultRefrigerator.insertCasette(nullptr, 2);
+  defaultRefrigerator.insertCasette(std::make_unique<Casette>(3, 1), 3);
+  defaultRefrigerator.insertCasette(std::make_unique<Casette>(3, 3), 4);
 
   // act
-  storage.storeNitrogenRefrigerator("default64x64.json", defaultRefrigerator);
-  Casette storedRefrigerator = storage.getStoredNitrogenRefrigerator("default64x64.json");
-  storedRefrigerator.getDimensions(dimX, dimY);
+  storage.storeNitrogenRefrigerator("refrigeratorStackUnitTestDefault.json", defaultRefrigerator);
+  NitrogenRefrigoratorKernel::CasetteStack storedRefrigerator =
+      storage.getStoredNitrogenRefrigerator("refrigeratorStackUnitTestDefault.json");
 
   // assert
-  EXPECT_EQ(dimX, 64);
-  EXPECT_EQ(dimY, 64);
-  for(unsigned i = 0; i < 64; ++i)
-  {
-    for(unsigned j = 0; j < 64; ++j)
-    {
-      EXPECT_EQ(storedRefrigerator(i, j) == defaultRefrigerator(i, j), true);
-    }
-  }
+  EXPECT_EQ(storedRefrigerator == defaultRefrigerator, true);
 }
 
 

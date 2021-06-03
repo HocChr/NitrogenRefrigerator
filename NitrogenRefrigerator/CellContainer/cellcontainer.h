@@ -80,28 +80,18 @@ public:
 
 //- this is the controller that manages the nitrogen refrigerator -------------
 
-// - this defines the interface for the data storage ------
-
-class IDataStorage
-{
-public:
-  // returns x- and y- dimensions
-  virtual Casette getStoredNitrogenRefrigerator() const = 0;
-  virtual void storeNitrogenRefrigerator(Casette&) const = 0;
-};
-
 // - this defines the NitrogenRefrigeratorController itself
 
 class CasetteStack final
 {  
 private:
 
-  std::unique_ptr<IDataStorage> _dataStorage;
+  //std::unique_ptr<IDataStorage> _dataStorage;
   std::vector<std::unique_ptr<Casette>> _casetteStack;
 
 public:
 
-  //CasetteStack(std::unique_ptr<IDataStorage> dataStorage);
+  bool operator==(const CasetteStack& other);
 
   unsigned size() const;
 
@@ -115,7 +105,17 @@ public:
   void removeCasette(unsigned index);
 
   // throws std::out_of_range when index >= stack size
-  const Casette* getCasette(unsigned index) const;
+  Casette* getCasette(unsigned index) const;
+};
+
+// - this defines the interface for the data storage ------
+
+class IDataStorage
+{
+public:
+  // returns x- and y- dimensions
+  virtual CasetteStack getStoredNitrogenRefrigerator() const = 0;
+  virtual void storeNitrogenRefrigerator(CasetteStack&) const = 0;
 };
 
 } // namespace NitrogenRefrigoratorKernel

@@ -9,12 +9,12 @@ class JsonStorage final : public NitrogenRefrigoratorKernel::IDataStorage
 
 public:
 
-  NitrogenRefrigoratorKernel::Casette getStoredNitrogenRefrigerator() const override;
-  void storeNitrogenRefrigerator(NitrogenRefrigoratorKernel::Casette&) const override;
+  NitrogenRefrigoratorKernel::CasetteStack getStoredNitrogenRefrigerator() const override;
+  void storeNitrogenRefrigerator(NitrogenRefrigoratorKernel::CasetteStack&) const override;
 
-  // --- additional funtions not declared by the interface, for convinence ---
-  NitrogenRefrigoratorKernel::Casette getStoredNitrogenRefrigerator(const std::string& filepath) const;
-  void storeNitrogenRefrigerator(const std::string& filepath, NitrogenRefrigoratorKernel::Casette&) const;
+  // --- additional functions not declared by the interface, for convinence ---
+  NitrogenRefrigoratorKernel::CasetteStack getStoredNitrogenRefrigerator(const std::string& filepath) const;
+  void storeNitrogenRefrigerator(const std::string& filepath, NitrogenRefrigoratorKernel::CasetteStack&) const;
 };
 
 #endif // JSONSTORAGE_H

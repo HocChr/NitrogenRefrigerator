@@ -389,23 +389,6 @@ TEST(NitrogenRefrigeratorTest, CasetteGetDimensions)
 
 // - test CasetteStack --------------------------------------------------------
 
-class DataStorageMock : public IDataStorage
-{
-private:
-  Casette _refrigerator;
-  unsigned _dimX, _dimY;
-public:
-
-  DataStorageMock(Casette&& refrigerator) :  _refrigerator(refrigerator)
-  {}
-
-  Casette getStoredNitrogenRefrigerator() const override
-  {
-    return _refrigerator;
-  }
-
-  void storeNitrogenRefrigerator(Casette&) const override{};
-};
 
 
 TEST(NitrogenRefrigeratorTest, CasetteStackInitWithNullptr)
@@ -745,5 +728,24 @@ TEST(NitrogenRefrigeratorTest, CasetteStackGetCasetteIndexOutOfRange)
                  }
                }, std::out_of_range );
 }
+
+
+//class DataStorageMock : public IDataStorage
+//{
+//private:
+//  Casette _refrigerator(0 ,0 );
+//  unsigned _dimX, _dimY;
+//public:
+//
+//  DataStorageMock(CasetteStack&& refrigerator) //:  _refrigerator(refrigerator)
+//  {}
+//
+//  Casette getStoredNitrogenRefrigerator() const override
+//  {
+//    return _refrigerator;
+//  }
+//
+//  void storeNitrogenRefrigerator(CasetteStack&) const override{};
+//};
 
 #endif // CELLCONTAINERTEST_H

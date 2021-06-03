@@ -235,6 +235,11 @@ void CasetteStack::insertCasettes(std::vector<std::unique_ptr<Casette>>&& casett
   _casetteStack = std::move(casettes); // move the casettes
 }
 
+bool CasetteStack::operator==(const CasetteStack &other)
+{
+  return _casetteStack == other._casetteStack;
+}
+
 unsigned CasetteStack::size() const
 {
   return _casetteStack.size();
@@ -254,7 +259,7 @@ void CasetteStack::removeCasette(unsigned index)
   _casetteStack.erase(_casetteStack.begin() + index);
 }
 
-const Casette* CasetteStack::getCasette(unsigned index) const
+Casette* CasetteStack::getCasette(unsigned index) const
 {
   if(index >= _casetteStack.size())
     throw std::out_of_range("getCasette: index out of range"); // ouch
