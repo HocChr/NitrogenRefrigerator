@@ -429,7 +429,6 @@ TEST(NitrogenRefrigeratorTest, CasetteStackInitWithNullptr)
   EXPECT_EQ(casetteStack.size(), 0);
 }
 
-
 TEST(NitrogenRefrigeratorTest, CasetteStackInitValid)
 {
   // arrange
@@ -509,7 +508,6 @@ TEST(NitrogenRefrigeratorTest, CasetteStackInsertCasette)
   EXPECT_EQ(dimY2, 7);
 }
 
-
 TEST(NitrogenRefrigeratorTest, CasetteStackInsertCasetteIndexOutOfRange)
 {
   // arrange
@@ -551,7 +549,6 @@ TEST(NitrogenRefrigeratorTest, CasetteStackInsertCasetteIndexOutOfRange)
   EXPECT_EQ(dimX2, 6);
   EXPECT_EQ(dimY2, 7);
 }
-
 
 TEST(NitrogenRefrigeratorTest, CasetteStackInsertSomeNullptr)
 {
@@ -599,7 +596,6 @@ TEST(NitrogenRefrigeratorTest, CasetteStackInsertSomeNullptr)
   EXPECT_EQ(dimX, 2);
   EXPECT_EQ(dimY, 1);
 }
-
 
 TEST(NitrogenRefrigeratorTest, CasetteStackRemoveCasettesIndexOutOfRange)
 {
@@ -950,7 +946,6 @@ TEST(NitrogenRefrigeratorTest, NitroRefrigeratorRemoveRack)
   EXPECT_EQ(refrigerator.size(), 1);
   EXPECT_EQ(r.name() == "My Rack 2", true);
 }
-
 
 TEST(NitrogenRefrigeratorTest, NitroRefrigeratorAppendRackSameName)
 {

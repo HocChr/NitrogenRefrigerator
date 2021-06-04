@@ -1,9 +1,14 @@
-#include <iostream>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
 
 using namespace std;
 
-int main()
+int main(int argc, char *argv[])
 {
-  cout << "Hello World!" << endl;
-  return 0;
+  QGuiApplication app(argc, argv);
+
+  QQmlApplicationEngine engine;
+  engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
+  return app.exec();
 }
