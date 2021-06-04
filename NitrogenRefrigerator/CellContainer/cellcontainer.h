@@ -135,7 +135,7 @@ public:
   // return the number of racks
   unsigned size() const;
 
-  // throw runtime_error exception when there is a stackn-naem equals the given stack-name
+  // throw runtime_error exception when there is a stack-name equals the given stack-name
   void appendRack(CasetteStack&& rack);
 
   // removes that rack with the given name

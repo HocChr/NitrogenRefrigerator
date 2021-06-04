@@ -911,6 +911,174 @@ TEST(NitrogenRefrigeratorTest, NitroRefrigeratorGetRack)
   EXPECT_EQ(rack == casetteStack2, true);
 }
 
+TEST(NitrogenRefrigeratorTest, NitroRefrigeratorRemoveRack)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(1, 1));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack("My Rack");
+  casetteStack.insertCasettes(std::move(casettes));
+
+  std::vector<std::unique_ptr<Casette>> casettes2;
+  casettes2.push_back(std::make_unique<Casette>(2, 3));
+  casettes2.push_back(std::make_unique<Casette>(3, 3));
+  casettes2.push_back(std::make_unique<Casette>(6, 7));
+  casettes2.push_back(nullptr);
+  casettes2.push_back(std::make_unique<Casette>(1, 1));
+  casettes2.push_back(nullptr);
+  casettes2.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack2("My Rack 2");
+  casetteStack2.insertCasettes(std::move(casettes2));
+
+  NitrogenRefrigorator refrigerator;
+  refrigerator.appendRack(std::move(casetteStack));
+  refrigerator.appendRack(std::move(casetteStack2));
+
+  // act
+  refrigerator.removeRack("My Rack");
+  auto& r = refrigerator.getRack("My Rack 2");
+
+  // assert
+  EXPECT_EQ(refrigerator.size(), 1);
+  EXPECT_EQ(r.name() == "My Rack 2", true);
+}
+
+
+TEST(NitrogenRefrigeratorTest, NitroRefrigeratorAppendRackSameName)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(1, 1));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack("My Rack");
+  casetteStack.insertCasettes(std::move(casettes));
+
+  std::vector<std::unique_ptr<Casette>> casettes2;
+  casettes2.push_back(std::make_unique<Casette>(2, 3));
+  casettes2.push_back(std::make_unique<Casette>(3, 3));
+  casettes2.push_back(std::make_unique<Casette>(6, 7));
+
+  CasetteStack casetteStack2("My Rack");
+  casetteStack2.insertCasettes(std::move(casettes2));
+
+  NitrogenRefrigorator refrigerator;
+  refrigerator.appendRack(std::move(casetteStack));
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   refrigerator.appendRack(std::move(casetteStack2));
+                 }
+                 catch( const std::runtime_error& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ( "there is a stack with that name yet!", e.what() );
+                   throw;
+                 }
+               }, std::runtime_error );
+}
+
+TEST(NitrogenRefrigeratorTest, NitroRefrigeratorRemoveRackNotFound)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(1, 1));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack("My Rack");
+  casetteStack.insertCasettes(std::move(casettes));
+
+  std::vector<std::unique_ptr<Casette>> casettes2;
+  casettes2.push_back(std::make_unique<Casette>(2, 3));
+  casettes2.push_back(std::make_unique<Casette>(3, 3));
+  casettes2.push_back(std::make_unique<Casette>(6, 7));
+
+  CasetteStack casetteStack2("My Rack 2");
+  casetteStack2.insertCasettes(std::move(casettes2));
+
+  NitrogenRefrigorator refrigerator;
+  refrigerator.appendRack(std::move(casetteStack));
+  refrigerator.appendRack(std::move(casetteStack2));
+
+  refrigerator.removeRack("My Rack");
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   refrigerator.removeRack("My Rack");
+                 }
+                 catch( const std::runtime_error& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ( "there is no stack with that name!", e.what() );
+                   throw;
+                 }
+               }, std::runtime_error );
+}
+
+TEST(NitrogenRefrigeratorTest, NitroRefrigeratorGetRackNotExists)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(1, 1));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack("My Rack");
+  casetteStack.insertCasettes(std::move(casettes));
+
+  std::vector<std::unique_ptr<Casette>> casettes2;
+  casettes2.push_back(std::make_unique<Casette>(2, 3));
+  casettes2.push_back(std::make_unique<Casette>(3, 3));
+  casettes2.push_back(std::make_unique<Casette>(6, 7));
+
+  CasetteStack casetteStack2("My Rack 2");
+  casetteStack2.insertCasettes(std::move(casettes2));
+
+  NitrogenRefrigorator refrigerator;
+  refrigerator.appendRack(std::move(casetteStack));
+  refrigerator.appendRack(std::move(casetteStack2));
+
+  // act & assert
+  EXPECT_THROW({
+                 try
+                 {
+                   refrigerator.getRack("My Rack 3");
+                 }
+                 catch( const std::runtime_error& e )
+                 {
+                   // and this tests that it has the correct message
+                   EXPECT_STREQ( "there is no stack with that name!", e.what() );
+                   throw;
+                 }
+               }, std::runtime_error );
+}
+
 
 
 //class DataStorageMock : public IDataStorage

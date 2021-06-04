@@ -354,6 +354,18 @@ void NitrogenRefrigorator::appendRack(CasetteStack &&rack)
   _racks.push_back(std::move(rack));
 }
 
+void NitrogenRefrigorator::removeRack(std::string name)
+{
+  const auto it = std::find_if(_racks.begin(), _racks.end(),
+                         [&name]
+                         (const CasetteStack& stack) { return stack.name() == name; });
+  if (it == _racks.end())
+  {
+    throw std::runtime_error("there is no stack with that name!");
+  }
+  _racks.erase(it);
+}
+
 const CasetteStack &NitrogenRefrigorator::getRack(std::string name) const
 {
   auto it = std::find_if(_racks.begin(), _racks.end(),
