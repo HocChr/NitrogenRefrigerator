@@ -34,7 +34,7 @@ CasetteStack JsonStorage::getStoredNitrogenRefrigerator(const std::string &filep
 
   try
   {
-    CasetteStack casetteStack;
+    CasetteStack casetteStack("");
     for(const auto& stackItem : j["data"])
     {
       unsigned dimX = stackItem[0];
@@ -76,7 +76,7 @@ CasetteStack JsonStorage::getStoredNitrogenRefrigerator(const std::string &filep
   {
     throw std::runtime_error(std::string("getStoredNitrogenRefrigerator: no valid Vial data"));
   }
-  return CasetteStack();
+  return CasetteStack("");
 }
 
 void JsonStorage::storeNitrogenRefrigerator(const std::string &filepath,

@@ -59,7 +59,7 @@ public:
   const std::string &cellType() const;
 };
 
-//- this is the Nitrogen Refrigerator Class -----------------------------------
+//- this is the Casette Class that carries the vials --------------------------
 
 class Casette final
 {
@@ -83,9 +83,7 @@ public:
   void getDimensions(unsigned& dimX, unsigned& dimY) const;
 };
 
-//- this is the controller that manages the nitrogen refrigerator -------------
-
-// - this defines the NitrogenRefrigeratorController itself
+//- this is the casette stack that carries the casettes -----------------------
 
 class CasetteStack final
 {  
@@ -93,12 +91,25 @@ private:
 
   //std::unique_ptr<IDataStorage> _dataStorage;
   std::vector<std::unique_ptr<Casette>> _casetteStack;
+  std::string _name = "";
 
 public:
+
+  CasetteStack() = delete;
+  CasetteStack(std::string&& name);
+  CasetteStack(const std::string& name);
+
+  CasetteStack(const CasetteStack&) = delete;
+  void operator=(const CasetteStack&) = delete;
+
+  CasetteStack(CasetteStack&&) = default;
+  CasetteStack& operator=(CasetteStack&&) = default;
 
   bool operator==(const CasetteStack& other) const;
 
   unsigned size() const;
+
+  const std::string& name() const;
 
   void insertCasettes(std::vector<std::unique_ptr<Casette>>&& casettes);
 
@@ -114,6 +125,27 @@ public:
   // throws std::out_of_range when index >= stack size
   Casette* getCasette(unsigned index) const;
 };
+
+class NitrogenRefrigorator final
+{
+  std::vector<CasetteStack> _racks;
+
+public:
+
+  // return the number of racks
+  unsigned size() const;
+
+  // throw runtime_error exception when there is a stackn-naem equals the given stack-name
+  void appendRack(CasetteStack&& rack);
+
+  // removes that rack with the given name
+  // throws runtime_error exception when a rack with that name was not found
+  void removeRack(std::string name);
+
+  // throws runtime_error exception when a rack with that name was not found
+  const CasetteStack& getRack(std::string name) const;
+};
+
 
 // - this defines the interface for the data storage ------
 

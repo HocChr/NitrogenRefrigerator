@@ -274,6 +274,14 @@ void CasetteStack::insertCasettes(std::vector<std::unique_ptr<Casette>>&& casett
   _casetteStack = std::move(casettes); // move the casettes
 }
 
+CasetteStack::CasetteStack(std::string &&name) : _name(name)
+{
+}
+
+CasetteStack::CasetteStack(const std::string &name) : _name(name)
+{
+}
+
 bool CasetteStack::operator==(const CasetteStack &other) const
 {
   bool ok = equal(begin(_casetteStack), end(_casetteStack),
@@ -293,6 +301,11 @@ bool CasetteStack::operator==(const CasetteStack &other) const
 unsigned CasetteStack::size() const
 {
   return _casetteStack.size();
+}
+
+const std::string &CasetteStack::name() const
+{
+  return _name;
 }
 
 void CasetteStack::insertCasette(std::unique_ptr<Casette> casette, unsigned index)
@@ -319,4 +332,37 @@ Casette* CasetteStack::getCasette(unsigned index) const
   if(index >= _casetteStack.size())
     throw std::out_of_range("getCasette: index out of range"); // ouch
   return _casetteStack.at(index).get();
+}
+
+//- Nitrogen Refrigerator -----------------------------------------------------
+
+unsigned NitrogenRefrigorator::size() const
+{
+  return _racks.size();
+}
+
+void NitrogenRefrigorator::appendRack(CasetteStack &&rack)
+{
+  auto it = std::find_if(_racks.begin(), _racks.end(),
+                         [&rack]
+                         (const CasetteStack& stack) { return stack.name() == rack.name(); });
+  if (it != _racks.end())
+  {
+    throw std::runtime_error("there is a stack with that name yet!");
+  }
+
+  _racks.push_back(std::move(rack));
+}
+
+const CasetteStack &NitrogenRefrigorator::getRack(std::string name) const
+{
+  auto it = std::find_if(_racks.begin(), _racks.end(),
+                         [&name]
+                         (const CasetteStack& stack) { return stack.name() == name; });
+  if (it == _racks.end())
+  {
+    throw std::runtime_error("there is no stack with that name!");
+  }
+
+  return *it;
 }

@@ -13,7 +13,7 @@ TEST(NitrogenRefrigeratorTest, JsonStorageCreateAndSafeDefaultData)
   // arrange
   JsonStorage storage;
   unsigned dimX, dimY;
-  NitrogenRefrigoratorKernel::CasetteStack defaultRefrigerator;
+  NitrogenRefrigoratorKernel::CasetteStack defaultRefrigerator("");
 
   defaultRefrigerator.insertCasette(std::make_unique<Casette>(3, 3), 0);
   defaultRefrigerator.insertCasette(std::make_unique<Casette>(1, 3), 1);
