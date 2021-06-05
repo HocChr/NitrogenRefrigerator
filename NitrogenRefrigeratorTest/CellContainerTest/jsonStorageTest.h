@@ -60,16 +60,15 @@ TEST(NitrogenRefrigeratorTest, JsonStorageCreateAndSafeDefaultData)
   NitrogenRefrigoratorKernel::CasetteStack casetteStack("My Rack");
   casetteStack.insertCasettes(std::move(casettes));
 
-
   auto casette3 = std::make_unique<NitrogenRefrigoratorKernel::Casette>(2, 3);
-  casette1->add(0, 0, std::make_unique<NitrogenRefrigoratorKernel::Vial>(dataSet1));
-  casette1->add(1, 0, std::make_unique<NitrogenRefrigoratorKernel::Vial>(dataSet2));
-  casette1->add(1, 2, std::make_unique<NitrogenRefrigoratorKernel::Vial>(dataSet3));
+  casette3->add(0, 0, std::make_unique<NitrogenRefrigoratorKernel::Vial>(dataSet1));
+  casette3->add(1, 0, std::make_unique<NitrogenRefrigoratorKernel::Vial>(dataSet2));
+  casette3->add(1, 2, std::make_unique<NitrogenRefrigoratorKernel::Vial>(dataSet3));
 
   auto casette4 = std::make_unique<NitrogenRefrigoratorKernel::Casette>(4, 3);
-  casette2->add(1, 0, std::make_unique<NitrogenRefrigoratorKernel::Vial>(dataSet1));
-  casette2->add(2, 1, std::make_unique<NitrogenRefrigoratorKernel::Vial>(dataSet2));
-  casette2->add(3, 2, std::make_unique<NitrogenRefrigoratorKernel::Vial>(dataSet3));
+  casette4->add(1, 0, std::make_unique<NitrogenRefrigoratorKernel::Vial>(dataSet1));
+  casette4->add(2, 1, std::make_unique<NitrogenRefrigoratorKernel::Vial>(dataSet2));
+  casette4->add(3, 2, std::make_unique<NitrogenRefrigoratorKernel::Vial>(dataSet3));
 
   std::vector<std::unique_ptr<Casette>> casettes2;
   casettes2.push_back(std::make_unique<NitrogenRefrigoratorKernel::Casette>(1, 3));
@@ -89,12 +88,16 @@ TEST(NitrogenRefrigeratorTest, JsonStorageCreateAndSafeDefaultData)
 
   // act
   storage.storeNitrogenRefrigerator("refrigeratorStackUnitTestDefault.json", refrigerator);
-  NitrogenRefrigoratorKernel::CasetteStack storedRefrigerator =
+  NitrogenRefrigoratorKernel::NitrogenRefrigorator storedRefrigerator =
       storage.getStoredNitrogenRefrigerator("refrigeratorStackUnitTestDefault.json");
 
   // assert
   EXPECT_EQ(storedRefrigerator.size() == refrigerator.size(), true);
-  EXPECT_EQ(storedRefrigerator.size() == refrigerator.size(), false);
+
+  for (unsigned i = 0; i < storedRefrigerator.size(); ++i)
+  {
+    EXPECT_EQ(storedRefrigerator.getRack(i) == refrigerator.getRack(i), true);
+  }
 }
 
 

@@ -295,6 +295,7 @@ bool CasetteStack::operator==(const CasetteStack &other) const
       return false;
     return *lhs.get() == *rhs.get();
   });
+  ok = ok ? _name == other.name() : false;
   return ok;
 }
 
@@ -352,6 +353,13 @@ void NitrogenRefrigorator::appendRack(CasetteStack &&rack)
   }
 
   _racks.push_back(std::move(rack));
+}
+
+void NitrogenRefrigorator::insertRack(CasetteStack &&rack, unsigned index)
+{
+  if(index > _racks.size())
+    throw std::out_of_range("insertRack: index out of range");
+  _racks.insert(_racks.begin() + index, std::move(rack));
 }
 
 void NitrogenRefrigorator::removeRack(std::string name)

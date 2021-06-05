@@ -141,7 +141,11 @@ public:
   unsigned size() const;
 
   // throw runtime_error exception when there is a stack-name equals the given stack-name
-  void appendRack(CasetteStack&& rack);
+  void appendRack(CasetteStack&& rack);  
+
+  // throws std::out_of_range when index > stack size
+  // the index numeration starts with 0
+  void insertRack(CasetteStack&& rack, unsigned index);
 
   // removes that rack with the given name
   // throws runtime_error exception when a rack with that name was not found
@@ -159,8 +163,8 @@ class IDataStorage
 {
 public:
   // returns x- and y- dimensions
-  virtual CasetteStack getStoredNitrogenRefrigerator() const = 0;
-  virtual void storeNitrogenRefrigerator(CasetteStack&) const = 0;
+  virtual NitrogenRefrigorator getStoredNitrogenRefrigerator() const = 0;
+  virtual void storeNitrogenRefrigerator(NitrogenRefrigorator&) const = 0;
 };
 
 } // namespace NitrogenRefrigoratorKernel
