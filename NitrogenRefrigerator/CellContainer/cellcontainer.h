@@ -51,6 +51,9 @@ public:
        std::string remark,
        std::string cellType);
 
+  Vial(const Vial&) = default;
+  Vial& operator=(const Vial&) = default;
+
   const Date &dateOfEntry() const;
   const Date &ageOfCells() const;
   int numberOfCells() const;
@@ -71,6 +74,8 @@ public:
   Casette() = delete;
 
   Casette (unsigned int dimx, unsigned int dimy);
+  Casette (const Casette&) = delete;
+  Casette& operator=(const Casette&) = delete;
 
   bool operator==(const Casette& other) const;
 
@@ -100,7 +105,7 @@ public:
   CasetteStack(const std::string& name);
 
   CasetteStack(const CasetteStack&) = delete;
-  void operator=(const CasetteStack&) = delete;
+  CasetteStack& operator=(const CasetteStack&) = delete;
 
   CasetteStack(CasetteStack&&) = default;
   CasetteStack& operator=(CasetteStack&&) = default;
@@ -144,6 +149,7 @@ public:
 
   // throws runtime_error exception when a rack with that name was not found
   const CasetteStack& getRack(std::string name) const;
+  const CasetteStack& getRack(unsigned index) const;
 };
 
 

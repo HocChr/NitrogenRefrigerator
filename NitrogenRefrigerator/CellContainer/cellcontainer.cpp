@@ -378,3 +378,12 @@ const CasetteStack &NitrogenRefrigorator::getRack(std::string name) const
 
   return *it;
 }
+
+const CasetteStack &NitrogenRefrigorator::getRack(unsigned index) const
+{
+  if (index > size())
+  {
+    throw std::out_of_range("getRack(): index out of range!");
+  }
+  return _racks.at(index);
+}

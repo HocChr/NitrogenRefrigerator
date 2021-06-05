@@ -907,6 +907,44 @@ TEST(NitrogenRefrigeratorTest, NitroRefrigeratorGetRack)
   EXPECT_EQ(rack == casetteStack2, true);
 }
 
+TEST(NitrogenRefrigeratorTest, NitroRefrigeratorGetRackByIndex)
+{
+  // arrange
+  std::vector<std::unique_ptr<Casette>> casettes;
+  casettes.push_back(std::make_unique<Casette>(2, 3));
+  casettes.push_back(std::make_unique<Casette>(3, 3));
+  casettes.push_back(std::make_unique<Casette>(6, 7));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(1, 1));
+  casettes.push_back(nullptr);
+  casettes.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack("My Rack");
+  casetteStack.insertCasettes(std::move(casettes));
+
+  std::vector<std::unique_ptr<Casette>> casettes2;
+  casettes2.push_back(std::make_unique<Casette>(2, 3));
+  casettes2.push_back(std::make_unique<Casette>(3, 3));
+  casettes2.push_back(std::make_unique<Casette>(6, 7));
+  casettes2.push_back(nullptr);
+  casettes2.push_back(std::make_unique<Casette>(1, 1));
+  casettes2.push_back(nullptr);
+  casettes2.push_back(std::make_unique<Casette>(2, 1));
+
+  CasetteStack casetteStack2("My Rack");
+  casetteStack2.insertCasettes(std::move(casettes2));
+
+  NitrogenRefrigorator refrigerator;
+  refrigerator.appendRack(std::move(casetteStack));
+
+  // act
+  auto & rack = refrigerator.getRack(0);
+
+  // assert
+  EXPECT_EQ(rack == casetteStack2, false);
+  EXPECT_EQ(rack == casetteStack2, true);
+}
+
 TEST(NitrogenRefrigeratorTest, NitroRefrigeratorRemoveRack)
 {
   // arrange

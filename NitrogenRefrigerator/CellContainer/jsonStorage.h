@@ -14,7 +14,7 @@ public:
 
   // --- additional functions not declared by the interface, for convinence ---
   NitrogenRefrigoratorKernel::CasetteStack getStoredNitrogenRefrigerator(const std::string& filepath) const;
-  void storeNitrogenRefrigerator(const std::string& filepath, NitrogenRefrigoratorKernel::CasetteStack&) const;
+  void storeNitrogenRefrigerator(const std::string& filepath, NitrogenRefrigoratorKernel::NitrogenRefrigorator&) const;
 };
 
 #endif // JSONSTORAGE_H
