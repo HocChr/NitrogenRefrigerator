@@ -181,74 +181,40 @@ Window {
                         value: 6
                     }
                 }
-
-                ListView{
-                    id: rackListLstView
-                    anchors.fill: rackListItems
+                ListView {
+                    id: list
+                    anchors.fill: parent
                     model: colorModel
-                    delegate: nameDelegate
-
-                    highlight: Rectangle {
-                        color: 'grey'
-                        Text {
-                            anchors.centerIn: parent
-                            text: 'Hello ' + colorModel.get(rackListLstView.currentIndex).name
-                            color: 'white'
-                        }
-                    }
-
-                    focus: true
-                    onCurrentItemChanged: {
-                        console.log(colorModel.get(currentIndex).name + ' selected');
-                    }
-                }
-
-                Component{
-                    id: nameDelegate
-
-                    Rectangle{
-                        id: itemDel
-
-                        width: rackListItems.width
-                        height: 90
-                        color: "gainsboro"
-                        border.color: "darkGray"
-                        border.width: 1
-
+                    delegate: Component {
                         Item {
-                            anchors.fill: parent
-                            Text {
-                                id: delgateText1
-                                color: "Black"
-                                font.pixelSize: 24
-                                anchors.verticalCenter: parent.verticalCenter
+                            id : bbb
+                            width: parent.width
+                            height: 40
+
+                            Column {
+                                anchors.verticalCenter: bbb.verticalCenter;
                                 x: 20
-                                text: name
+
+                                Text {
+                                    text: name;
+                                    font.pixelSize: 18
+                                    color: "black"
+                                }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: list.currentIndex = index
                             }
                         }
-
-                        MouseArea {
-                            id: mouseAreaRacklList
-                            anchors.fill: parent
-                            onClicked: {
-                                itemDel.state == 'clicked' ? itemDel.state = "" : itemDel.state = 'clicked';
-                                rackListLstView.currentIndex = index
-                            }
-                        }
-
-                        states: [
-                                 State {
-                                     name: "clicked"
-                                     PropertyChanges { target: itemDel; color: "green" }
-                                 }
-                             ]
                     }
+                    highlight: Rectangle {
+                        color: 'green'
+                    }
+                    focus: true
+                    onCurrentItemChanged: console.log(model.get(list.currentIndex).name + ' selected')
                 }
-
-
             }
-
-
         }
 
         Rectangle{
