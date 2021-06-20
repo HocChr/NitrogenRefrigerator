@@ -2,11 +2,19 @@ import QtQuick 2.6
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.0
 
+import nitrogenRefrigerator.qmlcomponets 1.0
+
 Window {
     visible: true
     visibility: "Maximized"
     width: 1200
     height: 800
+
+    property var stackList: null
+
+    Component.onCompleted:{
+        stackList = nitrogenRefrigerator.stacks
+    }
 
     Rectangle
     {
@@ -39,7 +47,6 @@ Window {
                        anchors.fill: parent
                        anchors.margins: -10
                        hoverEnabled: true         //this line will enable mouseArea.containsMouse
-                       //onClicked: Qt.quit()
                        onHoveredChanged: {
                            if(hoo)
                            {
@@ -184,19 +191,20 @@ Window {
                 ListView {
                     id: list
                     anchors.fill: parent
-                    model: colorModel
+                    model: stackList
                     delegate: Component {
                         Item {
                             id : bbb
                             width: parent.width
                             height: 40
+                            property int index: modelData.index
 
                             Column {
                                 anchors.verticalCenter: bbb.verticalCenter;
                                 x: 20
 
                                 Text {
-                                    text: name;
+                                    text: modelData.name;
                                     font.pixelSize: 18
                                     color: "black"
                                 }
@@ -204,7 +212,10 @@ Window {
 
                             MouseArea {
                                 anchors.fill: parent
-                                onClicked: list.currentIndex = index
+                                onClicked:{
+                                    console.log(bbb.index)
+                                    list.currentIndex = index
+                                }
                             }
                         }
                     }
@@ -212,7 +223,7 @@ Window {
                         color: 'green'
                     }
                     focus: true
-                    onCurrentItemChanged: console.log(model.get(list.currentIndex).name + ' selected')
+                    onCurrentItemChanged: console.log(stackList[(list.currentIndex)].name + ' selected')
                 }
             }
         }

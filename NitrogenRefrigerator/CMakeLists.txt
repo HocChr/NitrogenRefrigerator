@@ -32,8 +32,18 @@ set(PROJECT_SOURCES
         qml.qrc
 )
 
-set(HEADERS CellContainer/cellcontainer.h CellContainer/jsonStorage.h)
-set(SOURCES main.cpp CellContainer/cellcontainer.cpp CellContainer/jsonStorage.cpp)
+set(HEADERS
+  CellContainer/cellcontainer.h
+  CellContainer/jsonStorage.h
+  Gui/nitrogenrefrigoratorguimodel.h
+  )
+
+set(SOURCES
+  main.cpp
+  CellContainer/cellcontainer.cpp
+  CellContainer/jsonStorage.cpp
+  Gui/nitrogenrefrigoratorguimodel.cpp
+  )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(NitrogenRefrigerator
