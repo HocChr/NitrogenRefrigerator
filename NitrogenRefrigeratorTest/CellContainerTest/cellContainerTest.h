@@ -5,6 +5,7 @@
 #include <gmock/gmock-matchers.h>
 
 #include "../../NitrogenRefrigerator/CellContainer/cellcontainer.h"
+#include "../../NitrogenRefrigerator/CellContainer/jsonStorage.h"
 
 using namespace testing;
 using namespace NitrogenRefrigoratorKernel;
@@ -1135,24 +1136,22 @@ TEST(NitrogenRefrigeratorTest, NitroRefrigeratorGetRackNotExists)
                }, std::runtime_error );
 }
 
+// Test NitrogenrefrigeratorManager -------------------------------------------
+
+TEST(NitrogenRefrigeratorTest, NitroRefrigeratorManagerConstructor)
+{
+  // arrange
+  std::unique_ptr<IDataStorage> storage = std::make_unique<JsonStorage>();
+
+  // act
+  NitrogenRefrigoratorManager manager(std::move(storage));
+
+  // assert
+  // file could be loaded, no program termination ( assert ) happend
+}
 
 
-//class DataStorageMock : public IDataStorage
-//{
-//private:
-//  Casette _refrigerator(0 ,0 );
-//  unsigned _dimX, _dimY;
-//public:
-//
-//  DataStorageMock(CasetteStack&& refrigerator) //:  _refrigerator(refrigerator)
-//  {}
-//
-//  Casette getStoredNitrogenRefrigerator() const override
-//  {
-//    return _refrigerator;
-//  }
-//
-//  void storeNitrogenRefrigerator(CasetteStack&) const override{};
-//};
+
+
 
 #endif // CELLCONTAINERTEST_H

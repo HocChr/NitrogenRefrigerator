@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <assert.h>
 
 using namespace NitrogenRefrigoratorKernel;
 
@@ -394,4 +395,17 @@ const CasetteStack &NitrogenRefrigorator::getRack(unsigned index) const
     throw std::out_of_range("getRack(): index out of range!");
   }
   return _racks.at(index);
+}
+
+// ----------------------------------------------------------------------------
+
+NitrogenRefrigoratorManager::NitrogenRefrigoratorManager(std::unique_ptr<IDataStorage> storage)
+{
+  _dataStorage = std::move(storage);
+
+  try {
+    _refrigerator = std::move(_dataStorage->getStoredNitrogenRefrigerator());
+  }  catch (...) {
+    assert(false);
+  }
 }

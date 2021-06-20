@@ -137,6 +137,11 @@ class NitrogenRefrigorator final
 
 public:
 
+  NitrogenRefrigorator() = default;
+  NitrogenRefrigorator(const NitrogenRefrigorator& other) = delete;
+  NitrogenRefrigorator(NitrogenRefrigorator&& other) = default;
+  NitrogenRefrigorator& operator=(NitrogenRefrigorator&& other) = default;
+
   // return the number of racks
   unsigned size() const;
 
@@ -156,8 +161,7 @@ public:
   const CasetteStack& getRack(unsigned index) const;
 };
 
-
-// - this defines the interface for the data storage ------
+// - this defines the interface for the data storage --------------------------
 
 class IDataStorage
 {
@@ -165,6 +169,25 @@ public:
   // returns x- and y- dimensions
   virtual NitrogenRefrigorator getStoredNitrogenRefrigerator() const = 0;
   virtual void storeNitrogenRefrigerator(NitrogenRefrigorator&) const = 0;
+};
+
+// ----------------------------------------------------------------------------
+
+class NitrogenRefrigoratorManager
+{
+public:
+  NitrogenRefrigoratorManager() = delete;
+  NitrogenRefrigoratorManager(const NitrogenRefrigoratorManager&) = delete;
+
+  NitrogenRefrigoratorManager(std::unique_ptr<IDataStorage> storage);
+
+  const NitrogenRefrigorator& getNitrogenRefigerator();
+  void saveNitrogenRefrigerator();
+
+private:
+
+  std::unique_ptr<IDataStorage> _dataStorage;
+  NitrogenRefrigorator _refrigerator;
 };
 
 } // namespace NitrogenRefrigoratorKernel
