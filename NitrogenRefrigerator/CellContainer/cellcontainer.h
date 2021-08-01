@@ -167,8 +167,9 @@ class IDataStorage
 {
 public:
   // returns x- and y- dimensions
-  virtual NitrogenRefrigorator getStoredNitrogenRefrigerator() const = 0;
-  virtual void storeNitrogenRefrigerator(NitrogenRefrigorator&) const = 0;
+  virtual NitrogenRefrigorator getStoredNitrogenRefrigerator(const std::string& filepath) const = 0;
+  virtual void storeNitrogenRefrigerator(const std::string& filepath,
+                                         NitrogenRefrigoratorKernel::NitrogenRefrigorator&) const = 0;
 };
 
 // ----------------------------------------------------------------------------
@@ -176,6 +177,14 @@ public:
 class NitrogenRefrigoratorManager
 {
 public:
+  enum class ErrorCode
+  {
+    NO_ERROR = 0,
+    FILE_NOT_EXISTS,
+    FILE_NOT_VALID
+  };
+
+
   NitrogenRefrigoratorManager() = delete;
   NitrogenRefrigoratorManager(const NitrogenRefrigoratorManager&) = delete;
 
@@ -188,6 +197,9 @@ private:
 
   std::unique_ptr<IDataStorage> _dataStorage;
   NitrogenRefrigorator _refrigerator;
+  std::vector<ErrorCode> _errorCode;
+
+  const std::string _filePath = "NitrogenRefrigerator.json";
 };
 
 } // namespace NitrogenRefrigoratorKernel

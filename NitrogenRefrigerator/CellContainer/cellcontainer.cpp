@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <fstream>
 #include <assert.h>
 
 using namespace NitrogenRefrigoratorKernel;
@@ -399,13 +400,30 @@ const CasetteStack &NitrogenRefrigorator::getRack(unsigned index) const
 
 // ----------------------------------------------------------------------------
 
+static bool checkFileExists(const std::string& filepath)
+{
+  std::ifstream f(filepath.c_str());
+  return f.good();
+}
+
 NitrogenRefrigoratorManager::NitrogenRefrigoratorManager(std::unique_ptr<IDataStorage> storage)
 {
   _dataStorage = std::move(storage);
 
-  try {
-    _refrigerator = std::move(_dataStorage->getStoredNitrogenRefrigerator());
-  }  catch (...) {
-    assert(false);
+  try
+  {
+    _refrigerator = std::move(_dataStorage->getStoredNitrogenRefrigerator(_filePath));
+  }
+  catch (...)
+  {
+    if(!checkFileExists(_filePath))
+    {
+      _errorCode.push_back(ErrorCode::FILE_NOT_EXISTS);
+      _dataStorage->storeNitrogenRefrigerator(_filePath, _refrigerator);
+    }
+    else
+    {
+      assert(false);
+    }
   }
 }

@@ -7,17 +7,6 @@
 using namespace NitrogenRefrigoratorKernel;
 using json = nlohmann::json;
 
-
-NitrogenRefrigorator JsonStorage::getStoredNitrogenRefrigerator() const
-{
-  return getStoredNitrogenRefrigerator(_storageFile);
-}
-
-void JsonStorage::storeNitrogenRefrigerator(NitrogenRefrigoratorKernel::NitrogenRefrigorator &r) const
-{
-  storeNitrogenRefrigerator(_storageFile, r);
-}
-
 NitrogenRefrigorator JsonStorage::getStoredNitrogenRefrigerator(const std::string &filepath) const
 {
   std::ifstream i(filepath);

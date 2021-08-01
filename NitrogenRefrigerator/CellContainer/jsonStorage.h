@@ -5,16 +5,15 @@
 
 class JsonStorage final : public NitrogenRefrigoratorKernel::IDataStorage
 {
-  std::string _storageFile = "NitrogenRefrigerator.json";
-
 public:
 
-  NitrogenRefrigoratorKernel::NitrogenRefrigorator getStoredNitrogenRefrigerator() const override;
-  void storeNitrogenRefrigerator(NitrogenRefrigoratorKernel::NitrogenRefrigorator&) const override;
+  // --- throws std::runtime_error if file not exits or if the format not valid
+  NitrogenRefrigoratorKernel::NitrogenRefrigorator
+  getStoredNitrogenRefrigerator(const std::string& filepath) const override;
 
-  // --- additional functions not declared by the interface, for convinence ---
-  NitrogenRefrigoratorKernel::NitrogenRefrigorator getStoredNitrogenRefrigerator(const std::string& filepath) const;
-  void storeNitrogenRefrigerator(const std::string& filepath, NitrogenRefrigoratorKernel::NitrogenRefrigorator&) const;
+  void
+  storeNitrogenRefrigerator(const std::string& filepath,
+                            NitrogenRefrigoratorKernel::NitrogenRefrigorator&) const override;
 };
 
 #endif // JSONSTORAGE_H
